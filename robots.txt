@@ -1,0 +1,15 @@
+# 검색엔진 크롤링 차단
+User-agent: *
+Disallow: /
+
+# Google
+User-agent: Googlebot
+Disallow: /
+
+# Bing
+User-agent: Bingbot
+Disallow: /
+
+# Naver
+User-agent: Yeti
+Disallow: /
