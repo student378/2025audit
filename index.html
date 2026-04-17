@@ -2217,19 +2217,147 @@ var KB_DDAY = [
 ];
 
 // ── 검색 엔진 (키워드 매칭)
+
+// ════════════════════════════════════════════════════
+//  검색 고도화 v2.0 — 유사어·오타교정·어간추출
+// ════════════════════════════════════════════════════
+
+// ① 유사어·동의어 사전
+var SYNONYMS = {
+  '법카':'법인카드','카드':'법인카드','법인카드':'예산·회계',
+  '예결산':'예산·회계','결산':'예산·회계','예산편성':'예산·회계',
+  '세입':'예산·회계','세출':'예산·회계','이월':'예산·회계',
+  '불용':'예산·회계','가지급':'예산·회계','부당집행':'예산·회계',
+  '채용절차':'채용·인사','교원채용':'채용·인사','직원채용':'채용·인사',
+  '심사위원':'채용·인사','면접위원':'채용·인사','연구실적':'채용·인사',
+  '이중인정':'채용·인사','결격사유':'채용·인사','신원조사':'채용·인사',
+  '특정대학':'채용·인사','동문채용':'채용·인사','성범죄조회':'채용·인사',
+  '수의계약':'계약·입찰','일반경쟁':'계약·입찰','분리발주':'계약·입찰',
+  '분할발주':'계약·입찰','지명경쟁':'계약·입찰','g2b':'계약·입찰',
+  '나라장터':'계약·입찰','입찰공고':'계약·입찰','하도급':'계약·입찰','전자조달':'계약·입찰',
+  '연구노트':'연구비·과제','연구책임':'연구비·과제','직무발명':'연구비·과제',
+  '특허':'연구비·과제','간접비':'연구비·과제','산학협력':'연구비·과제',
+  '연구결과':'연구비·과제','과제종료':'연구비·과제','인건비':'연구비·과제',
+  '준공검사':'시설·공사','하자보수':'시설·공사','하자검사':'시설·공사',
+  '착공':'시설·공사','설계변경':'시설·공사','산안비':'시설·공사',
+  '법정경비':'시설·공사','감리':'시설·공사','미등록업체':'시설·공사',
+  '출석미달':'교육·학사','성적부여':'교육·학사','보강미실시':'교육·학사',
+  '재수강':'교육·학사','현장실습':'교육·학사','미인가':'교육·학사',
+  '원격수업':'교육·학사','이러닝':'교육·학사','장학금':'교육·학사',
+  '징계의결':'징계·법령','의원면직':'징계·법령','범죄통보':'징계·법령','징계감경':'징계·법령',
+  '겸직허가':'복무·겸직','외부출강':'복무·겸직','국외여행':'복무·겸직',
+  '무단수강':'복무·겸직','보직부여':'복무·겸직',
+};
+
+// ② 기관명 약어 사전 (런타임 자동 생성)
+var INST_ALIASES = (function() {
+  var map = {};
+  D.forEach(function(d) {
+    var inst = d.institution;
+    var clean = inst.replace(/학교법인\s*/g,'').trim();
+    if (clean !== inst) map[clean.toLowerCase()] = inst;
+    if (inst.indexOf('대학교') > -1) {
+      var abbr = inst.replace('대학교','대').replace(/학교법인\s*/g,'').trim();
+      map[abbr.toLowerCase()] = inst;
+    }
+    var noParen = inst.replace(/\([^)]+\)/g,'').trim();
+    if (noParen !== inst) map[noParen.toLowerCase()] = inst;
+    map[inst.replace(/\s+/g,'').toLowerCase()] = inst;
+  });
+  return map;
+})();
+
+// ③ Levenshtein 거리 (오타 교정)
+function levenshtein(a, b) {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  if (Math.abs(a.length - b.length) > 3) return 99;
+  var matrix = [];
+  for (var i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (var j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (var i = 1; i <= b.length; i++) {
+    for (var j = 1; j <= a.length; j++) {
+      matrix[i][j] = b.charAt(i-1) === a.charAt(j-1)
+        ? matrix[i-1][j-1]
+        : Math.min(matrix[i-1][j-1]+1, matrix[i][j-1]+1, matrix[i-1][j]+1);
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+// ④ 한국어 어간 추출 (조사·어미 제거)
+function stemKorean(word) {
+  var suffixes = ['이','가','을','를','은','는','의','에서','에게','으로','로','과','와','도','만','까지','부터'];
+  for (var i = 0; i < suffixes.length; i++) {
+    if (word.endsWith(suffixes[i]) && word.length > suffixes[i].length+1)
+      return word.slice(0, word.length - suffixes[i].length);
+  }
+  return word;
+}
+
+// ⑤ 쿼리 확장 (유사어·약어 포함)
+function expandQuery(w) {
+  var expanded = [w];
+  var lw = w.toLowerCase().replace(/\s+/g,'');
+  if (SYNONYMS[lw]) expanded.push(SYNONYMS[lw]);
+  if (INST_ALIASES[lw]) expanded.push(INST_ALIASES[lw]);
+  Object.keys(SYNONYMS).forEach(function(k) {
+    if ((k.includes(lw) || lw.includes(k)) && k.length >= 2)
+      expanded.push(SYNONYMS[k]);
+  });
+  return expanded.filter(function(v,i,a){ return a.indexOf(v)===i; });
+}
+
+// ⑥ 오타 교정 후보 반환
+function findClosestKeyword(q) {
+  var lq = q.toLowerCase();
+  var keys = Object.keys(SYNONYMS).concat(
+    ['예산·회계','채용·인사','계약·입찰','연구비·과제','시설·공사','교육·학사','징계·법령','복무·겸직']
+  );
+  var best = null, bestDist = 99;
+  keys.forEach(function(k) {
+    var d = levenshtein(lq, k);
+    if (d < bestDist && d <= 2 && d < lq.length * 0.5) { bestDist = d; best = k; }
+  });
+  return best;
+}
+
 function chatSearch(query) {
-  var q = query.toLowerCase().trim();
-  var words = q.split(/\s+/).filter(function(w){ return w.length >= 1; });
+  var lq = query.toLowerCase().trim();
+  var words = lq.split(/\s+/).filter(function(w){ return w.length >= 1; });
+  var stems = words.map(stemKorean);
+  var allTerms = [];
+  words.concat(stems).forEach(function(w) {
+    expandQuery(w).forEach(function(exp) { allTerms.push(exp.toLowerCase()); });
+  });
+  allTerms = allTerms.filter(function(v,i,a){ return a.indexOf(v)===i; });
 
   var scored = D.map(function(d) {
-    var text = (d.institution+d.category+d.issue+d.action).toLowerCase();
-    var score = 0;
-    words.forEach(function(w) {
-      if (d.institution.toLowerCase().includes(w)) score += 3;
-      if (d.category.toLowerCase().includes(w)) score += 2;
-      if (d.issue.toLowerCase().includes(w)) score += 1;
-      if (d.action.toLowerCase().includes(w)) score += 0.5;
+    var instL  = d.institution.toLowerCase();
+    var catL   = d.category.toLowerCase();
+    var issueL = d.issue.toLowerCase();
+    var actL   = d.action.toLowerCase();
+    var score  = 0, matched = 0;
+
+    allTerms.forEach(function(term) {
+      var im = instL.includes(term);
+      var cm = catL.includes(term);
+      var pm = issueL.includes(term);
+      var am = actL.includes(term);
+      if (im) { score += 5; matched++; if (instL === term) score += 5; }
+      if (cm) { score += 3; matched++; }
+      if (pm) { score += 2; matched++; }
+      if (am)   score += 0.5;
+      // 오타 근사 매칭
+      if (!im && !pm && term.length >= 3) {
+        instL.split(/[\s,·]+/).forEach(function(iw) {
+          if (iw.length >= 2 && levenshtein(term, iw) <= 1) score += 2;
+        });
+      }
     });
+    if (d.amount > 1e10) score += 2;
+    else if (d.amount > 1e9) score += 1;
+    if (matched >= 2) score *= 1.3;
     return { d: d, score: score };
   }).filter(function(x){ return x.score > 0; });
 
@@ -2237,7 +2365,7 @@ function chatSearch(query) {
     if (b.score !== a.score) return b.score - a.score;
     return b.d.amount - a.d.amount;
   });
-  return scored.slice(0, 8).map(function(x){ return x.d; });
+  return scored.slice(0, 10).map(function(x){ return x.d; });
 }
 
 // ── 의도 분류
@@ -2334,9 +2462,16 @@ function generateResponse(query) {
     return { type: 'risk' };
   }
 
-  // 7. 키워드 검색
+  // 7. 키워드 검색 (오타 교정 포함)
   var results = chatSearch(query);
   if (results.length === 0) {
+    var closest = findClosestKeyword(query);
+    if (closest) {
+      var corrected = chatSearch(closest);
+      if (corrected.length > 0) {
+        return { type: 'search', results: corrected, instMatch: null, typoHint: query, typoFixed: closest };
+      }
+    }
     return { type: 'notfound', query: query };
   }
   // 특정 기관 검색인지 확인
@@ -2449,6 +2584,12 @@ function renderResponse(resp) {
   }
 
   else if (resp.type === 'search') {
+    // 오타 교정 힌트 표시
+    if (resp.typoHint) {
+      html += '<div style="background:#1E2D4A;border-left:3px solid #F59E0B;padding:6px 10px;border-radius:0 6px 6px 0;margin-bottom:8px;font-size:11px;color:#FCD34D">' +
+        '🔍 <span style="text-decoration:line-through;color:#9CA3AF">' + resp.typoHint + '</span> → ' +
+        '<strong>' + resp.typoFixed + '</strong> 로 교정하여 검색했습니다.</div>';
+    }
     if (resp.instMatch) {
       var instData = D.filter(function(d){ return d.institution===resp.instMatch; });
       var instAmt = instData.reduce(function(s,d){ return s+d.amount; }, 0);
@@ -2538,6 +2679,7 @@ function chatAppendBot(html) {
 
 // ── 전송
 function chatSend(text) {
+  if (isGeminiLoading) return;
   var input = document.getElementById('chat-input');
   var msg = (text || input.value).trim();
   if (!msg) return;
@@ -2545,11 +2687,16 @@ function chatSend(text) {
   chatAutoResize(input);
   chatAppendUser(msg);
 
-  // 즉시 응답 생성
-  setTimeout(function() {
-    var resp = generateResponse(msg);
-    chatAppendBot(renderResponse(resp));
-  }, 80); // 80ms 딜레이 (자연스러운 느낌)
+  if (GEMINI_ENABLED && GEMINI_GAS_URL) {
+    // ── Gemini API 모드
+    geminiRequest(msg, 'chat');
+  } else {
+    // ── 로컬 검색 모드 (즉시)
+    setTimeout(function() {
+      var resp = generateResponse(msg);
+      chatAppendBot(renderResponse(resp));
+    }, 80);
+  }
 }
 
 function chatQuick(btn) {
@@ -2621,16 +2768,24 @@ function popAppendBot(html) {
 }
 
 function popSend(text) {
+  if (isGeminiLoading) return;
   var input = document.getElementById('popup-input');
   var msg   = (text || input.value).trim();
   if (!msg) return;
   input.value = '';
   popAutoResize(input);
   popAppendUser(msg);
-  setTimeout(function() {
-    var resp = generateResponse(msg);
-    popAppendBot(renderResponse(resp));
-  }, 80);
+
+  if (GEMINI_ENABLED && GEMINI_GAS_URL) {
+    // ── Gemini API 모드
+    geminiRequest(msg, 'popup');
+  } else {
+    // ── 로컬 검색 모드 (즉시)
+    setTimeout(function() {
+      var resp = generateResponse(msg);
+      popAppendBot(renderResponse(resp));
+    }, 80);
+  }
 }
 
 function popQuick(btn) {
@@ -2641,6 +2796,139 @@ function popQuick(btn) {
 function popHandleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); popSend(); }
 }
+
+// ════════════════════════════════════════════════════
+//  Gemini API 요청 함수
+// ════════════════════════════════════════════════════
+function geminiRequest(msg, target) {
+  isGeminiLoading = true;
+
+  // 로딩 표시
+  var typingId = 'typing-' + Date.now();
+  var typingHtml = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+  if (target === 'popup') {
+    popAppendBotTyping(typingId, typingHtml);
+  } else {
+    chatAppendBotTyping(typingId, typingHtml);
+  }
+
+  // 로컬 검색 결과를 컨텍스트로 첨부
+  var localResults = chatSearch(msg);
+  var context = '';
+  if (localResults.length > 0) {
+    context = localResults.slice(0,5).map(function(d,i) {
+      var amt = d.amount > 0 ? ' / ' + (d.amount/1e8).toFixed(1) + '억원' : '';
+      return (i+1) + '. [' + d.category + '] ' + d.institution + '\n' +
+             '   지적: ' + d.issue.substring(0,80) + '\n' +
+             '   처분: ' + d.action.substring(0,40) + amt;
+    }).join('\n\n');
+  }
+
+  // 히스토리에 사용자 메시지 추가
+  chatConvHistory.push({ role: 'user', content: msg });
+
+  // GAS로 POST 요청
+  fetch(GEMINI_GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: msg,
+      context: context,
+      history: chatConvHistory.slice(-8)
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    removeTypingBubble(typingId);
+    isGeminiLoading = false;
+
+    if (data.error) {
+      // API 오류 → 로컬 폴백
+      var resp = generateResponse(msg);
+      var fallbackHtml = renderResponse(resp) +
+        '<div style="margin-top:8px;font-size:10px;color:#6B7280">⚠️ AI 응답 오류 — 로컬 검색 결과입니다</div>';
+      if (target === 'popup') popAppendBot(fallbackHtml);
+      else chatAppendBot(fallbackHtml);
+      return;
+    }
+
+    var reply = data.reply || '';
+    // 히스토리에 AI 응답 추가
+    chatConvHistory.push({ role: 'model', content: reply });
+    // 히스토리 최대 20턴 유지
+    if (chatConvHistory.length > 20) chatConvHistory = chatConvHistory.slice(-20);
+
+    var replyHtml = renderMarkdownToHtml(reply) +
+      '<div style="margin-top:6px;font-size:10px;color:#14B8A6;display:flex;align-items:center;gap:4px">' +
+      '<span style="width:5px;height:5px;border-radius:50%;background:#14B8A6;display:inline-block"></span>' +
+      'Gemini AI 답변</div>';
+
+    if (target === 'popup') popAppendBot(replyHtml);
+    else chatAppendBot(replyHtml);
+  })
+  .catch(function(err) {
+    removeTypingBubble(typingId);
+    isGeminiLoading = false;
+    // 네트워크 오류 → 로컬 폴백
+    var resp = generateResponse(msg);
+    var fallbackHtml = renderResponse(resp) +
+      '<div style="margin-top:8px;font-size:10px;color:#6B7280">⚠️ 네트워크 오류 — 로컬 검색 결과입니다</div>';
+    if (target === 'popup') popAppendBot(fallbackHtml);
+    else chatAppendBot(fallbackHtml);
+  });
+}
+
+// ── 마크다운 → HTML 변환 (Gemini 응답용)
+function renderMarkdownToHtml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*([^*\n]+)\*\*/g,'<strong style="color:#60A5FA">$1</strong>')
+    .replace(/\*([^*\n]+)\*/g,'<em>$1</em>')
+    .replace(/^### (.+)$/gm,'<div style="font-size:12.5px;font-weight:700;color:#5EEAD4;margin:8px 0 3px">$1</div>')
+    .replace(/^## (.+)$/gm,'<div style="font-size:13px;font-weight:700;color:#93C5FD;margin:8px 0 3px">$1</div>')
+    .replace(/^- (.+)$/gm,'<div style="margin:3px 0;padding-left:12px;color:#D1D5DB">· $1</div>')
+    .replace(/^\d+\. (.+)$/gm,'<div style="margin:3px 0;padding-left:12px;color:#D1D5DB">$1</div>')
+    .replace(/`([^`]+)`/g,'<code style="background:#1F2937;padding:1px 5px;border-radius:3px;font-size:11px;color:#5EEAD4">$1</code>')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+// ── 타이핑 버블 추가/제거
+function chatAppendBotTyping(id, inner) {
+  var msgs = document.getElementById('chat-messages');
+  var div = document.createElement('div');
+  div.className = 'chat-msg bot-msg'; div.id = id;
+  div.innerHTML = '<div class="chat-avatar">🤖</div><div class="chat-bubble">' + inner + '</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function popAppendBotTyping(id, inner) {
+  var msgs = document.getElementById('popup-messages');
+  var div = document.createElement('div');
+  div.className = 'pop-msg pop-bot'; div.id = id;
+  div.innerHTML = '<div class="pop-avatar">🤖</div><div class="pop-bubble">' + inner + '</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTypingBubble(id) {
+  var el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+// ── GAS URL 설정 함수 (콘솔에서 호출 가능)
+function setGeminiUrl(url) {
+  GEMINI_GAS_URL = url;
+  GEMINI_ENABLED = !!url;
+  var mode = GEMINI_ENABLED ? '🤖 Gemini AI 모드' : '🔍 로컬 검색 모드';
+  console.log('[챗봇] ' + mode + ' 활성화');
+  // 챗봇 헤더 상태 업데이트
+  var statusEl = document.querySelector('.chat-status-text');
+  if (statusEl) statusEl.textContent = GEMINI_ENABLED ? 'Gemini AI' : '즉시 응답';
+  var dotEl = document.querySelector('.status-dot');
+  if (dotEl) dotEl.style.background = GEMINI_ENABLED ? '#A855F7' : '#22C55E';
+}
+
 function popAutoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 80) + 'px';
@@ -2650,6 +2938,14 @@ function chatAutoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 100) + 'px';
 }
+
+// ════════════════════════════════════════════════════
+//  Gemini API 연동 설정
+// ════════════════════════════════════════════════════
+var GEMINI_GAS_URL = 'https://script.google.com/macros/s/AKfycbzHpy42rPu8vkqREGbw36njKPy6JfZ8NEisBB1_NUugLITmMfN324nkc0aNx565l9F4/exec';      // GAS 배포 URL 입력 (설정 필요)
+var GEMINI_ENABLED = true;   // GAS URL 입력 후 true로 변경
+var chatConvHistory = [];     // 대화 히스토리 (Gemini 전송용)
+var isGeminiLoading = false;  // 로딩 상태
 
 // ── 초기화
 initKpi();
