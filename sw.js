@@ -1,5 +1,5 @@
-// Service Worker — 감사 지적사항 현황판 v3
-const CACHE_NAME = 'audit-v3';
+// Service Worker — 감사 지적사항 현황판 v4
+const CACHE_NAME = 'audit-v4';
 const CORE = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 const CDN  = [
   'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap',
