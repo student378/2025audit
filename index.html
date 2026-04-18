@@ -2828,25 +2828,36 @@ function geminiRequest(msg, target) {
   chatConvHistory.push({ role: 'user', content: msg });
 
   // GAS로 POST 요청
+  // ※ GAS는 'Content-Type: application/json' 헤더 시 CORS preflight(OPTIONS)를 유발해 실패함
+  //    → 헤더 생략 + text/plain 형태로 전송하면 simple request로 처리되어 CORS 통과
+  //    → redirect: 'follow' 는 GAS 302 리다이렉트를 자동으로 따라감
   fetch(GEMINI_GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    redirect: 'follow',
     body: JSON.stringify({
       message: msg,
       context: context,
       history: chatConvHistory.slice(-8)
     })
   })
-  .then(function(res) { return res.json(); })
+  .then(function(res) {
+    var ct = res.headers.get('content-type') || '';
+    // GAS가 text/plain으로 응답하더라도 JSON 파싱 시도
+    return res.text().then(function(txt) {
+      try { return JSON.parse(txt); }
+      catch(e) { return { error: 'JSON 파싱 실패: ' + txt.substring(0, 100) }; }
+    });
+  })
   .then(function(data) {
     removeTypingBubble(typingId);
     isGeminiLoading = false;
 
     if (data.error) {
-      // API 오류 → 로컬 폴백
+      // API 오류 → 로컬 폴백 + 오류 상세 표시
+      console.warn('[챗봇] GAS 오류:', data.error);
       var resp = generateResponse(msg);
       var fallbackHtml = renderResponse(resp) +
-        '<div style="margin-top:8px;font-size:10px;color:#6B7280">⚠️ AI 응답 오류 — 로컬 검색 결과입니다</div>';
+        '<div style="margin-top:8px;font-size:10px;color:#6B7280">⚠️ AI 응답 오류 — 로컬 검색 결과입니다 (' + data.error + ')</div>';
       if (target === 'popup') popAppendBot(fallbackHtml);
       else chatAppendBot(fallbackHtml);
       return;
@@ -2869,6 +2880,7 @@ function geminiRequest(msg, target) {
   .catch(function(err) {
     removeTypingBubble(typingId);
     isGeminiLoading = false;
+    console.error('[챗봇] fetch 네트워크 오류:', err);
     // 네트워크 오류 → 로컬 폴백
     var resp = generateResponse(msg);
     var fallbackHtml = renderResponse(resp) +
@@ -2942,7 +2954,7 @@ function chatAutoResize(el) {
 // ════════════════════════════════════════════════════
 //  Gemini API 연동 설정
 // ════════════════════════════════════════════════════
-var GEMINI_GAS_URL = 'https://script.google.com/macros/s/AKfycbzHpy42rPu8vkqREGbw36njKPy6JfZ8NEisBB1_NUugLITmMfN324nkc0aNx565l9F4/exec';      // GAS 배포 URL 입력 (설정 필요)
+var GEMINI_GAS_URL = 'https://script.google.com/macros/s/AKfycbxpgg37vPERehyX2WDZ-phDjEUMLxs4m7jsn4pwoO8CRj1xXCLjmrAwvugqb148oshE/exec';      // GAS 배포 URL 입력 (설정 필요)
 var GEMINI_ENABLED = true;   // GAS URL 입력 후 true로 변경
 var chatConvHistory = [];     // 대화 히스토리 (Gemini 전송용)
 var isGeminiLoading = false;  // 로딩 상태
