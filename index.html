@@ -2229,30 +2229,30 @@ var KB_DDAY = [
 // ════════════════════════════════════════════════════
 
 // ① 유사어·동의어 사전
+// SYNONYMS: 검색어 → 검색어 (실제 issue/institution 텍스트에 있는 단어로만 확장)
+// 카테고리명으로 확장하지 않음 — 카테고리 매칭은 classifyIntent에서만 처리
 var SYNONYMS = {
-  '법카':'법인카드','카드':'법인카드','법인카드':'예산·회계',
-  '예결산':'예산·회계','결산':'예산·회계','예산편성':'예산·회계',
-  '세입':'예산·회계','세출':'예산·회계','이월':'예산·회계',
-  '불용':'예산·회계','가지급':'예산·회계','부당집행':'예산·회계',
-  '채용절차':'채용·인사','교원채용':'채용·인사','직원채용':'채용·인사',
-  '심사위원':'채용·인사','면접위원':'채용·인사','연구실적':'채용·인사',
-  '이중인정':'채용·인사','결격사유':'채용·인사','신원조사':'채용·인사',
-  '특정대학':'채용·인사','동문채용':'채용·인사','성범죄조회':'채용·인사',
-  '수의계약':'계약·입찰','일반경쟁':'계약·입찰','분리발주':'계약·입찰',
-  '분할발주':'계약·입찰','지명경쟁':'계약·입찰','g2b':'계약·입찰',
-  '나라장터':'계약·입찰','입찰공고':'계약·입찰','하도급':'계약·입찰','전자조달':'계약·입찰',
-  '연구노트':'연구비·과제','연구책임':'연구비·과제','직무발명':'연구비·과제',
-  '특허':'연구비·과제','간접비':'연구비·과제','산학협력':'연구비·과제',
-  '연구결과':'연구비·과제','과제종료':'연구비·과제','인건비':'연구비·과제',
-  '준공검사':'시설·공사','하자보수':'시설·공사','하자검사':'시설·공사',
-  '착공':'시설·공사','설계변경':'시설·공사','산안비':'시설·공사',
-  '법정경비':'시설·공사','감리':'시설·공사','미등록업체':'시설·공사',
-  '출석미달':'교육·학사','성적부여':'교육·학사','보강미실시':'교육·학사',
-  '재수강':'교육·학사','현장실습':'교육·학사','미인가':'교육·학사',
-  '원격수업':'교육·학사','이러닝':'교육·학사','장학금':'교육·학사',
-  '징계의결':'징계·법령','의원면직':'징계·법령','범죄통보':'징계·법령','징계감경':'징계·법령',
-  '겸직허가':'복무·겸직','외부출강':'복무·겸직','국외여행':'복무·겸직',
-  '무단수강':'복무·겸직','보직부여':'복무·겸직',
+  '법카':'법인카드',
+  '카드사용':'법인카드',
+  '예결산':'예산',
+  '부당집행':'부당',
+  '교원채용':'채용',
+  '직원채용':'채용',
+  '심사위원':'면접',
+  '결격사유':'결격',
+  '신원조사':'신원',
+  '동문채용':'출신',
+  '성범죄조회':'성범죄',
+  '나라장터':'g2b',
+  '전자조달':'전자조달시스템',
+  '산안비':'산업안전보건관리비',
+  '출석미달':'출석',
+  '보강미실시':'보강',
+  '이러닝':'원격수업',
+  '범죄통보':'범죄',
+  '징계감경':'감경',
+  '겸직허가':'겸직',
+  '외부출강':'출강',
 };
 
 // ② 기관명 약어 사전 (런타임 자동 생성)
@@ -2338,34 +2338,36 @@ function chatSearch(query) {
   });
   allTerms = allTerms.filter(function(v,i,a){ return a.indexOf(v)===i; });
 
+  // 카테고리명 문자열은 term에서 제거 (false positive 방지)
+  var catNames = ['예산·회계','채용·인사','계약·입찰','연구비·과제','시설·공사','교육·학사','징계·법령','복무·겸직','개인정보·공시','기타'];
+  allTerms = allTerms.filter(function(t) { return catNames.indexOf(t) === -1; });
+
   var scored = D.map(function(d) {
     var instL  = d.institution.toLowerCase();
-    var catL   = d.category.toLowerCase();
     var issueL = d.issue.toLowerCase();
     var actL   = d.action.toLowerCase();
     var score  = 0, matched = 0;
 
     allTerms.forEach(function(term) {
+      if (term.length < 2) return; // 1글자 term 무시
       var im = instL.includes(term);
-      var cm = catL.includes(term);
       var pm = issueL.includes(term);
       var am = actL.includes(term);
       if (im) { score += 5; matched++; if (instL === term) score += 5; }
-      if (cm) { score += 3; matched++; }
-      if (pm) { score += 2; matched++; }
+      if (pm) { score += 3; matched++; }
       if (am)   score += 0.5;
-      // 오타 근사 매칭
-      if (!im && !pm && term.length >= 3) {
-        instL.split(/[\s,·]+/).forEach(function(iw) {
-          if (iw.length >= 2 && levenshtein(term, iw) <= 1) score += 2;
+      // 오타 근사 매칭 (기관명만, issue는 너무 넓음)
+      if (!im && term.length >= 3) {
+        instL.split(/[\s,·()]+/).forEach(function(iw) {
+          if (iw.length >= 2 && levenshtein(term, iw) <= 1) score += 1.5;
         });
       }
     });
-    if (d.amount > 1e10) score += 2;
-    else if (d.amount > 1e9) score += 1;
-    if (matched >= 2) score *= 1.3;
+    if (d.amount > 1e10) score += 1;
+    else if (d.amount > 1e9) score += 0.5;
+    if (matched >= 2) score *= 1.2;
     return { d: d, score: score };
-  }).filter(function(x){ return x.score > 0; });
+  }).filter(function(x){ return x.score >= 3; }); // 최소 임계값 3점
 
   scored.sort(function(a,b){
     if (b.score !== a.score) return b.score - a.score;
@@ -2380,20 +2382,22 @@ function classifyIntent(q) {
   if (/현황|요약|통계|전체|얼마나|몇 건|몇건/.test(lq)) return 'stats';
   if (/준비|서류|체크|점검|가이드|수감/.test(lq)) return 'prep';
   if (/d-\d|디|일정|로드맵|언제/.test(lq)) return 'roadmap';
-  if (/처분|경고|주의|시정|징계|고발/.test(lq)) return 'action';
+  if (/처분|경고|주의|시정|징계|고발/.test(lq) && !/검색|사례|찾/.test(lq)) return 'action';
   if (/고위험|위험|위반|주의사항/.test(lq)) return 'risk';
-  // 카테고리 직접 매칭
+  // 카테고리 직접 매칭 — 구체적 키워드(기관명, 세부 행위) 없이 분야만 물어볼 때만
+  // 예: "예산 회계 사례" O / "법인카드 부당 집행" X (키워드 검색으로)
   var catMap = {
-    '예산': '예산·회계', '회계': '예산·회계', '법인카드': '예산·회계',
-    '채용': '채용·인사', '인사': '채용·인사', '임용': '채용·인사',
-    '연구': '연구비·과제', '연구비': '연구비·과제',
-    '시설': '시설·공사', '공사': '시설·공사',
-    '교육': '교육·학사', '학사': '교육·학사', '수업': '교육·학사',
-    '계약': '계약·입찰', '입찰': '계약·입찰',
-    '징계': '징계·법령', '복무': '복무·겸직', '겸직': '복무·겸직',
+    '예산·회계': /^(예산|회계|결산)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '채용·인사': /^(채용|인사|임용)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '연구비·과제': /^(연구비|연구과제|연구)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '시설·공사': /^(시설|공사)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '교육·학사': /^(교육|학사|수업)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '계약·입찰': /^(계약|입찰)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '징계·법령': /^(징계|법령)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
+    '복무·겸직': /^(복무|겸직)\s*(분야|영역|사례|현황)?$/.test(lq.trim()),
   };
-  for (var key in catMap) {
-    if (lq.includes(key)) return { type: 'category', cat: catMap[key] };
+  for (var cat in catMap) {
+    if (catMap[cat]) return { type: 'category', cat: cat };
   }
   return 'search';
 }
@@ -2424,15 +2428,18 @@ function generateResponse(query) {
   // 2. 수감자료 준비 가이드
   if (intent === 'prep') {
     var targetCat = null;
-    for (var cat in KB_DOCS) {
-      if (lq.includes(cat.replace('·','')) || lq.includes(cat)) {
-        targetCat = cat; break;
-      }
-    }
-    if (!targetCat) {
-      if (lq.includes('법인카드') || lq.includes('카드')) targetCat = '예산·회계';
-      else if (lq.includes('채용')) targetCat = '채용·인사';
-      else if (lq.includes('연구')) targetCat = '연구비·과제';
+    var prepCatMap = {
+      '예산·회계': /예산|회계|법인카드|결산|세입|세출|이월|불용/.test(lq),
+      '채용·인사': /채용|인사|임용|심사위원|면접/.test(lq),
+      '연구비·과제': /연구비|연구과제|연구노트/.test(lq),
+      '계약·입찰': /계약|입찰|수의계약/.test(lq),
+      '시설·공사': /시설|공사|준공|감리/.test(lq),
+      '교육·학사': /교육|학사|수업|성적|장학/.test(lq),
+      '징계·법령': /징계|법령/.test(lq),
+      '복무·겸직': /복무|겸직|출강/.test(lq),
+    };
+    for (var pc in prepCatMap) {
+      if (prepCatMap[pc]) { targetCat = pc; break; }
     }
     return { type: 'prep', cat: targetCat, kb: targetCat ? KB_DOCS[targetCat] : null };
   }
