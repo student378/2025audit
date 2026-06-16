@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>감사지적사례 대시보드 매뉴얼 | 유한대학교</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a3a6b;--blue:#2557a7;--blue2:#3b72c4;--blue-light:#dce9f8;
+  --green:#1a7f4b;--green-bg:#e6f7ef;
+  --orange:#d97706;--orange-bg:#fef3c7;
+  --red:#b91c1c;--red-bg:#fde8e8;
+  --bg:#f0f4fa;--surf:#fff;--surf2:#f8fafd;
+  --txt:#1c2b3a;--txt2:#4a5c6a;--txt3:#8a9baa;
+  --border:#dde5ef;
+  --sh:0 2px 12px rgba(26,58,107,.10);
+  --sh2:0 6px 28px rgba(26,58,107,.16);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.7}
+
+/* 레이아웃 */
+.container{max-width:900px;margin:0 auto;padding:0 20px 80px}
+
+/* 헤더 */
+.header{background:linear-gradient(135deg,#1a3a6b 0%,#2557a7 100%);color:#fff;padding:40px 20px 32px;text-align:center;margin-bottom:0}
+.header-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:14px}
+.header h1{font-size:26px;font-weight:900;line-height:1.3;margin-bottom:8px}
+.header p{font-size:13px;opacity:.8;margin-bottom:16px}
+.header-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.header-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:all .2s}
+.header-btn.primary{background:#fff;color:var(--navy)}
+.header-btn.secondary{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.header-btn:hover{transform:translateY(-1px)}
+
+/* 탭 네비게이션 */
+.tab-nav{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tab-nav-inner{max-width:900px;margin:0 auto;padding:0 20px;display:flex;gap:0;overflow-x:auto}
+.tab-nav-inner::-webkit-scrollbar{display:none}
+.tnav-btn{flex-shrink:0;padding:14px 18px;font-size:12px;font-weight:700;color:var(--txt3);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tnav-btn.active,.tnav-btn:hover{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* 섹션 */
+.section{display:none;padding-top:32px}
+.section.active{display:block}
+
+/* 섹션 헤더 */
+.sec-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+.sec-num{width:36px;height:36px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0}
+.sec-title{font-size:20px;font-weight:800;color:var(--navy);line-height:1.3}
+.sec-sub{font-size:12px;color:var(--txt3);margin-top:3px}
+
+/* 카드 */
+.card{background:#fff;border-radius:14px;padding:22px 24px;margin-bottom:16px;box-shadow:var(--sh);border:1px solid var(--border)}
+.card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';display:inline-block;width:4px;height:16px;background:var(--blue);border-radius:2px}
+
+/* 스텝 */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:19px;top:42px;bottom:0;width:2px;background:var(--border)}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;position:relative;z-index:1}
+.step-body{flex:1;padding-bottom:24px}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;margin-top:8px}
+.step-desc{font-size:13px;color:var(--txt2);line-height:1.75}
+
+/* 스크린샷 시뮬레이션 */
+.screen{background:#1e2a3a;border-radius:10px;overflow:hidden;margin:12px 0;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.screen-bar{background:#2a3a50;padding:8px 14px;display:flex;align-items:center;gap:8px}
+.screen-dot{width:10px;height:10px;border-radius:50%}
+.screen-url{flex:1;background:rgba(255,255,255,.08);border-radius:4px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,.5);font-family:monospace}
+.screen-body{padding:14px}
+.fake-tab-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.fake-tab{padding:5px 10px;border-radius:5px;font-size:10px;font-weight:700;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+.fake-tab.active{background:var(--blue);color:#fff}
+.fake-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.fake-kpi-item{background:rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center}
+.fake-kpi-num{font-size:18px;font-weight:900;color:#60a5fa}
+.fake-kpi-label{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px}
+.fake-row{background:rgba(255,255,255,.05);border-radius:6px;padding:8px 10px;margin-bottom:5px;font-size:10px;color:rgba(255,255,255,.6);display:flex;gap:8px;align-items:center}
+.fake-badge{padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700}
+.fake-badge.high{background:#b91c1c33;color:#fca5a5}
+.fake-badge.mid{background:#d9770633;color:#fbbf24}
+.fake-badge.info{background:#1d4ed833;color:#93c5fd}
+.fake-chat{background:rgba(255,255,255,.05);border-radius:8px;padding:10px;margin-bottom:6px}
+.fake-chat-q{font-size:10px;color:#93c5fd;margin-bottom:5px}
+.fake-chat-a{font-size:9px;color:rgba(255,255,255,.55);line-height:1.5}
+
+/* 배지 */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-orange{background:var(--orange-bg);color:var(--orange)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-navy{background:#e8eef8;color:var(--navy)}
+
+/* 팁 박스 */
+.tip{border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12px;line-height:1.75;display:flex;gap:10px}
+.tip.blue{background:var(--blue-light);border-left:4px solid var(--blue)}
+.tip.green{background:var(--green-bg);border-left:4px solid var(--green)}
+.tip.orange{background:var(--orange-bg);border-left:4px solid var(--orange)}
+.tip.red{background:var(--red-bg);border-left:4px solid var(--red)}
+.tip-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.tip b{font-weight:700}
+
+/* 테이블 */
+.tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+.tbl th{background:var(--navy);color:#fff;padding:9px 12px;text-align:left;font-weight:700}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--txt2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:nth-child(even) td{background:var(--surf2)}
+
+/* 체크리스트 */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;gap:10px;padding:10px 14px;background:var(--surf2);border-radius:8px;font-size:13px;color:var(--txt2);align-items:flex-start}
+.checklist li::before{content:'☐';font-size:16px;flex-shrink:0;color:var(--blue);margin-top:1px}
+.checklist li.done::before{content:'☑';color:var(--green)}
+
+/* 구분선 */
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+/* 링크 박스 */
+.link-box{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#fff;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--txt);transition:all .2s;margin:8px 0}
+.link-box:hover{border-color:var(--blue);box-shadow:var(--sh)}
+.link-box-url{font-size:11px;color:var(--txt3);font-family:monospace;margin-top:2px}
+.link-box-arrow{color:var(--blue);font-size:18px}
+
+/* 열 레이아웃 */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.cols2{grid-template-columns:1fr}.fake-kpi{grid-template-columns:repeat(2,1fr)}}
+
+/* 인쇄 */
+@media print{.tab-nav,.header-btns{display:none}.section{display:block!important}.container{max-width:100%}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">📘 공식 매뉴얼</div>
+  <h1>교육부 감사지적사례<br>AI 분석 대시보드<br>제작 & 활용 매뉴얼</h1>
+  <p>유한대학교 학생복지팀 / 감사실 | 2026년 6월</p>
+  <div class="header-btns">
+    <a href="https://student378.github.io/2025audit/" target="_blank" class="header-btn primary">🔍 대시보드 바로가기</a>
+    <a href="https://student378.github.io/check/" target="_blank" class="header-btn secondary">✅ 자체점검 연계</a>
+  </div>
+</div>
+
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tnav-btn active" onclick="showSec('s1',this)">① 시스템 개요</button>
+    <button class="tnav-btn" onclick="showSec('s2',this)">② 제작 과정</button>
+    <button class="tnav-btn" onclick="showSec('s3',this)">③ 탭별 기능</button>
+    <button class="tnav-btn" onclick="showSec('s4',this)">④ AI챗봇 활용</button>
+    <button class="tnav-btn" onclick="showSec('s5',this)">⑤ 자체점검 연계</button>
+    <button class="tnav-btn" onclick="showSec('s6',this)">⑥ 데이터 갱신</button>
+    <button class="tnav-btn" onclick="showSec('s7',this)">⑦ 활용 시나리오</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ① 시스템 개요 -->
+<div class="section active" id="s1">
+  <div class="sec-hdr">
+    <div class="sec-num">①</div>
+    <div><div class="sec-title">시스템 개요 — 이 시스템이 하는 일</div><div class="sec-sub">도입 배경과 구성 요소를 한눈에 파악합니다</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">왜 만들었나요?</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">교육부 감사 사례는 매년 PDF로만 배포되어 <strong style="color:var(--red)">패턴 분석이 불가능</strong>했습니다. 10년 994건의 지적 사례를 구조화하고 AI 검색으로 즉시 활용할 수 있게 만든 것이 이 시스템입니다.</p>
+    <div class="cols2">
+      <div class="tip blue"><div class="tip-icon">📊</div><div><b>기존 방식</b><br>PDF 수작업 검색 → 건당 15분 소요, 패턴 분석 불가</div></div>
+      <div class="tip green"><div class="tip-icon">🤖</div><div><b>현재 방식</b><br>AI 자연어 검색 → 즉시(5초), 유사 사례 자동 매칭</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">시스템 구성</div>
+    <table class="tbl">
+      <tr><th>구성 요소</th><th>역할</th><th>기술</th></tr>
+      <tr><td>📊 <b>감사 대시보드</b></td><td>994건 시각화 + AI 검색</td><td>Chart.js + Gemini API</td></tr>
+      <tr><td>✅ <b>자체점검 시스템</b></td><td>부서별 점검 입력·제출</td><td>GAS + localStorage</td></tr>
+      <tr><td>🔍 <b>관리자 현황판</b></td><td>전 부서 제출 현황 모니터링</td><td>GAS API + 실시간 조회</td></tr>
+      <tr><td>☁️ <b>배포 인프라</b></td><td>웹 호스팅 (무료)</td><td>GitHub Pages</td></tr>
+    </table>
+    <div class="tip orange"><div class="tip-icon">💡</div><div><b>개발비 0원 구조</b> — GitHub Pages(무료) + GAS(무료) + Gemini API(소량 무료)만 사용합니다. 서버·유지비 없음.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">빠른 접속 주소</div>
+    <a class="link-box" href="https://student378.github.io/2025audit/" target="_blank">
+      <div><div style="font-weight:700;font-size:13px;">🔍 교육부 감사 AI 분석 대시보드</div><div class="link-box-url">student378.github.io/2025audit/</div></div>
+      <span class="link-box-arrow">→</span>
+    </a>
+    <a class="link-box" href="https://student378.github.io/check/" target="_blank">
+      <div><div style="font-weight:700;font-size:13px;">✅ 행정업무 자체점검 시스템</div><div class="link-box-url">student378.github.io/check/</div></div>
+      <span class="link-box-arrow">→</span>
+    </a>
+    <a class="link-box" href="https://student378.github.io/check/admin.html" target="_blank">
+      <div><div style="font-weight:700;font-size:13px;">🔒 감사실 관리자 현황판</div><div class="link-box-url">student378.github.io/check/admin.html</div></div>
+      <span class="link-box-arrow">→</span>
+    </a>
+  </div>
+</div>
+
+<!-- ② 제작 과정 -->
+<div class="section" id="s2">
+  <div class="sec-hdr">
+    <div class="sec-num">②</div>
+    <div><div class="sec-title">제작 과정 — 어떻게 만들었나요?</div><div class="sec-sub">담당자 1인이 AI 보조로 자체 개발한 전 과정입니다</div></div>
+  </div>
+
+  <div class="card">
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">교육부 감사 PDF 데이터 수집 및 구조화</div>
+          <div class="step-desc">최근 10년(2015~2024) 교육부 감사 결과 보고서를 수집합니다. PDF 원문에서 <strong>기관명·연도·지적 내용·조치 사항·금액</strong>을 추출하여 Google Sheets에 정리합니다.</div>
+          <div class="tip blue" style="margin-top:10px"><div class="tip-icon">💡</div><div>Claude에게 "이 PDF 내용을 기관명, 연도, 지적내용, 카테고리, 조치금액으로 구조화해줘" 라고 요청하면 대부분 자동 처리됩니다.</div></div>
+          <div class="screen">
+            <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">Google Sheets — 감사지적사례_데이터.xlsx</div></div>
+            <div class="screen-body">
+              <div class="fake-row"><span class="fake-badge high">학사</span><span style="color:rgba(255,255,255,.7)">2023 A대학</span><span style="color:rgba(255,255,255,.4)">전형 성적 반영비율 무단 변경</span><span style="margin-left:auto;color:#fbbf24">시정 / 340억</span></div>
+              <div class="fake-row"><span class="fake-badge mid">인사</span><span style="color:rgba(255,255,255,.7)">2022 B대학</span><span style="color:rgba(255,255,255,.4)">연구실적 이중인정 적발</span><span style="margin-left:auto;color:#fbbf24">주의 / 0원</span></div>
+              <div class="fake-row"><span class="fake-badge high">회계</span><span style="color:rgba(255,255,255,.7)">2021 C대학</span><span style="color:rgba(255,255,255,.4)">법인카드 심야 사용 미정산</span><span style="margin-left:auto;color:#fbbf24">환수 / 12억</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">8개 카테고리 분류 체계 설계</div>
+          <div class="step-desc">994건의 사례를 <strong>학사·재무·인사·시설·연구비·계약·공시·기타</strong> 8개로 분류합니다. Claude에게 각 사례의 카테고리 자동 분류를 요청하면 대부분 정확히 처리됩니다.</div>
+          <table class="tbl" style="margin-top:10px">
+            <tr><th>카테고리</th><th>건수</th><th>주요 지적 유형</th></tr>
+            <tr><td>💰 예산·회계</td><td>342건 (34%)</td><td>법인카드, 예·결산, 부외통장</td></tr>
+            <tr><td>👥 채용·인사</td><td>134건 (13%)</td><td>채용 절차, 연구실적 중복</td></tr>
+            <tr><td>🏗️ 시설·공사</td><td>118건 (12%)</td><td>수의계약, 안전점검 미실시</td></tr>
+            <tr><td>📚 교육·학사</td><td>98건 (10%)</td><td>성적 처리, 보강 미실시</td></tr>
+            <tr><td>기타 4개</td><td>302건 (31%)</td><td>연구비, 계약, 공시 등</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">HTML + Chart.js 대시보드 개발</div>
+          <div class="step-desc">Claude에게 "Chart.js로 연도별·카테고리별 감사 지적 현황을 시각화하는 HTML을 만들어줘. 필터와 검색도 포함해서."라고 요청하여 초안을 생성합니다.</div>
+          <div class="tip blue"><div class="tip-icon">📝</div><div><b>Claude 프롬프트 예시:</b><br>"아래 JSON 데이터를 기반으로 Chart.js 바차트(연도별), 파이차트(카테고리별), 검색 필터를 갖춘 감사 대시보드 HTML을 만들어줘. 다크 테마, 반응형."</div></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Gemini API AI 챗봇 연동</div>
+          <div class="step-desc">Google AI Studio에서 Gemini API 키를 발급받고 GAS 프록시를 통해 연동합니다. 사용자가 자연어로 질문하면 994건 데이터 중 관련 사례를 즉시 매칭합니다.</div>
+          <div class="tip green"><div class="tip-icon">🔑</div><div><b>API 키 발급:</b> aistudio.google.com → API Keys → Create API Key (무료 티어로 일일 충분)</div></div>
+          <div class="tip orange"><div class="tip-icon">⚠️</div><div><b>보안:</b> API 키는 반드시 GAS(서버사이드)에만 저장. HTML에 직접 넣으면 안 됩니다.</div></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">GitHub Pages 배포</div>
+          <div class="step-desc">완성된 index.html을 GitHub 저장소에 업로드하고 Pages 설정으로 무료 배포합니다.</div>
+          <div style="background:var(--surf2);border-radius:8px;padding:12px 14px;margin-top:8px;font-size:12px;color:var(--txt2)">
+            <div style="margin-bottom:6px;font-weight:700;color:var(--navy)">배포 순서</div>
+            github.com → New repository → 파일 업로드 → Settings → Pages → Branch: main → Save
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">자체점검 시스템과 양방향 연계 설정</div>
+          <div class="step-desc">감사대시보드 탭 영역에 "✅ 자체점검 바로가기" 버튼을 추가하고, 자체점검 화면에 "🔍 감사 사례 참고" 링크를 추가하여 두 시스템을 연결합니다.</div>
+          <div class="tip green"><div class="tip-icon">✅</div><div>이 연계 설정이 완료되면 <strong>"교육부 감사 패턴 → AI 분석 → 자체점검 → 선제 예방"</strong>의 완전한 선순환 구조가 완성됩니다.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 탭별 기능 -->
+<div class="section" id="s3">
+  <div class="sec-hdr">
+    <div class="sec-num">③</div>
+    <div><div class="sec-title">탭별 기능 가이드</div><div class="sec-sub">6개 탭 각각의 사용법을 단계별로 설명합니다</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 탭 1 — 종합 대시보드</div>
+    <div class="step-desc" style="margin-bottom:12px">접속하면 처음 보이는 화면입니다. 전체 현황을 한눈에 파악합니다.</div>
+    <div class="screen">
+      <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">student378.github.io/2025audit/</div></div>
+      <div class="screen-body">
+        <div class="fake-tab-row">
+          <div class="fake-tab active">📊 종합 대시보드</div>
+          <div class="fake-tab">📋 지적사례 목록</div>
+          <div class="fake-tab">🏫 대학별 현황</div>
+          <div class="fake-tab">📋 수감자료</div>
+          <div class="fake-tab">🏢 담당업무</div>
+          <div class="fake-tab">💬 AI챗봇</div>
+        </div>
+        <div class="fake-kpi">
+          <div class="fake-kpi-item"><div class="fake-kpi-num">994</div><div class="fake-kpi-label">총 지적사례</div></div>
+          <div class="fake-kpi-item"><div class="fake-kpi-num">10년</div><div class="fake-kpi-label">데이터 기간</div></div>
+          <div class="fake-kpi-item"><div class="fake-kpi-num">1,889억</div><div class="fake-kpi-label">재정조치</div></div>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border-radius:6px;height:50px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.3);font-size:10px">📊 연도별 지적건수 Bar Chart</div>
+      </div>
+    </div>
+    <ul class="checklist" style="margin-top:12px">
+      <li>KPI 숫자(총 건수, 기간, 재정조치액)로 전체 규모를 파악합니다</li>
+      <li>연도별 바차트에서 최근 감사 강화 트렌드를 확인합니다</li>
+      <li>카테고리 파이차트에서 어느 분야 지적이 많은지 확인합니다</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 탭 2 — 지적사례 목록</div>
+    <div class="step-desc" style="margin-bottom:12px">994건 전체를 필터·검색·정렬로 탐색합니다. 가장 자주 사용하는 탭입니다.</div>
+    <div class="cols2" style="margin-bottom:12px">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">사용 방법</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num" style="width:28px;height:28px;font-size:11px">1</div>
+            <div class="step-body" style="padding-bottom:14px"><div class="step-title" style="font-size:12px;margin-top:4px">카테고리 필터 선택</div><div class="step-desc" style="font-size:11px">학사/재무/인사 등 원하는 분야 클릭</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num" style="width:28px;height:28px;font-size:11px">2</div>
+            <div class="step-body" style="padding-bottom:14px"><div class="step-title" style="font-size:12px;margin-top:4px">키워드 검색</div><div class="step-desc" style="font-size:11px">"법인카드", "수의계약" 등 입력</div></div>
+          </div>
+          <div class="step">
+            <div class="step-num" style="width:28px;height:28px;font-size:11px">3</div>
+            <div class="step-body"><div class="step-title" style="font-size:12px;margin-top:4px">사례 클릭 → 상세 확인</div><div class="step-desc" style="font-size:11px">조치 내용, 재정 규모, 연도 확인</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">화면 미리보기</div>
+        <div class="screen" style="margin:0">
+          <div class="screen-body">
+            <div style="background:rgba(255,255,255,.08);border-radius:5px;padding:5px 8px;font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px">🔍 키워드 검색...</div>
+            <div class="fake-row"><span class="fake-badge high">회계</span> 법인카드 심야 사용 <span style="margin-left:auto;color:#fbbf24;font-size:9px">2023</span></div>
+            <div class="fake-row"><span class="fake-badge high">인사</span> 연구실적 이중인정 <span style="margin-left:auto;color:#fbbf24;font-size:9px">2022</span></div>
+            <div class="fake-row"><span class="fake-badge mid">시설</span> 수의계약 근거 미비 <span style="margin-left:auto;color:#fbbf24;font-size:9px">2021</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tip blue"><div class="tip-icon">💡</div><div>감사 전 우리 학교에서 발생 가능한 사례를 <b>키워드로 검색</b>해 미리 점검하세요. "장학금", "보강", "법인카드" 등으로 검색하면 유사 지적 사례를 즉시 확인할 수 있습니다.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏢 탭 5 — 담당업무별 가이드 (가장 중요한 탭)</div>
+    <div class="step-desc" style="margin-bottom:12px">8개 부서별로 핵심 체크포인트를 위험도(🔴고위험 / 🟠중위험 / 🟡주의)로 분류해서 보여줍니다. <strong style="color:var(--red)">자체점검 항목과 직결</strong>됩니다.</div>
+    <table class="tbl">
+      <tr><th>부서</th><th>자체점검 연계</th><th>주요 고위험 항목</th></tr>
+      <tr><td>💰 기획·예산팀</td><td><span class="badge badge-navy">§2 예산회계</span></td><td>법인카드, 예결산 이사회 제출</td></tr>
+      <tr><td>👥 인사·채용팀</td><td><span class="badge badge-navy">§1 인사관리</span></td><td>채용 단계별 서류, 연구실적 중복</td></tr>
+      <tr><td>🏗️ 시설·안전팀</td><td><span class="badge badge-navy">§7 시설관리</span></td><td>안전점검 기록 미보존</td></tr>
+      <tr><td>🎓 학생지원팀</td><td><span class="badge badge-navy">§6 학사관리</span></td><td>성적기준 미달 장학금</td></tr>
+      <tr><td>🔬 연구·산학팀</td><td><span class="badge badge-navy">§3 연구비</span></td><td>연구결과물 미제출, 인건비 차명</td></tr>
+    </table>
+    <div class="tip green"><div class="tip-icon">✅</div><div>각 체크포인트 옆의 <b>✅ 자체점검 §X-X</b> 배지를 클릭하면 자체점검 입력화면으로 바로 이동합니다.</div></div>
+  </div>
+</div>
+
+<!-- ④ AI챗봇 활용 -->
+<div class="section" id="s4">
+  <div class="sec-hdr">
+    <div class="sec-num">④</div>
+    <div><div class="sec-title">AI 검색챗봇 활용법</div><div class="sec-sub">💬 탭 — Gemini API 기반 자연어 검색</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">챗봇이 하는 일</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">자연어로 질문하면 994건 감사 데이터 중 관련 사례를 즉시 찾아줍니다. 기존 키워드 검색으로는 놓치는 <strong>의미적 유사 사례</strong>까지 매칭합니다.</p>
+    <div class="screen">
+      <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">student378.github.io/2025audit/ — 💬 AI 검색챗봇</div></div>
+      <div class="screen-body">
+        <div class="fake-chat">
+          <div class="fake-chat-q">Q. 시설 공사 관련해서 어떤 유형의 지적이 많이 발생했어?</div>
+          <div class="fake-chat-a">시설·공사 관련 지적은 118건으로 전체 12%를 차지합니다. 주요 유형은 ① 수의계약 근거 미비(43건) ② 설계·감리 동일업체 발주(28건) ③ 안전점검 기록 미보존(18건) 순입니다. 특히 2천만원 이상 수의계약 시 법령 근거를 구체적으로 기재하지 않은 사례가 가장 많습니다.</div>
+        </div>
+        <div class="fake-chat">
+          <div class="fake-chat-q">Q. 우리가 올해 특히 주의해야 할 항목은?</div>
+          <div class="fake-chat-a">최근 3년 기준 증가 추세인 지적 유형은 ① 개인정보 처리방침 미갱신 ② 연구비 종료 후 집행 ③ 근로장학금 실근무 기록 미비입니다. 이 세 항목을 우선 자체점검하시길 권장합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">효과적인 질문 예시</div>
+    <table class="tbl">
+      <tr><th>상황</th><th>추천 질문</th></tr>
+      <tr><td>감사 전 준비</td><td>"우리 학교 학사팀이 감사 전 가장 먼저 확인해야 할 사항은?"</td></tr>
+      <tr><td>유사 사례 검색</td><td>"장학금 지급 관련 지적 사례를 모두 보여줘"</td></tr>
+      <tr><td>트렌드 파악</td><td>"최근 3년간 새로 증가하는 지적 유형은 무엇이야?"</td></tr>
+      <tr><td>조치 방법</td><td>"법인카드 심야 사용이 지적됐을 때 어떻게 해명했어?"</td></tr>
+      <tr><td>위험도 확인</td><td>"시설팀 기준 고위험 항목만 요약해줘"</td></tr>
+    </table>
+    <div class="tip orange"><div class="tip-icon">⚠️</div><div>AI 챗봇은 데이터 기반 참고 자료입니다. 최종 감사 대응은 반드시 관련 법령과 담당자 판단을 병행하세요.</div></div>
+  </div>
+</div>
+
+<!-- ⑤ 자체점검 연계 -->
+<div class="section" id="s5">
+  <div class="sec-hdr">
+    <div class="sec-num">⑤</div>
+    <div><div class="sec-title">자체점검 시스템 연계 활용</div><div class="sec-sub">감사 사례 → 체크리스트 → 사전 예방의 선순환</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">연계 흐름 (4단계)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">감사대시보드 "담당업무별 가이드" 탭 확인</div>
+          <div class="step-desc">우리 부서와 관련된 고위험 항목을 확인합니다. 각 항목 옆의 <span class="badge badge-green">✅ 자체점검 §X-X</span> 배지를 클릭하면 해당 자체점검 영역으로 바로 이동합니다.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">자체점검 입력화면에서 해당 항목 점검</div>
+          <div class="step-desc"><code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">student378.github.io/check/</code> 접속 → 부서 선택 → 해당 영역의 세부 항목 이상유무 입력</div>
+          <div class="tip blue" style="margin-top:8px"><div class="tip-icon">💡</div><div>점검 입력 중 "🔍 감사 사례 참고" 버튼을 누르면 대시보드를 바로 열 수 있습니다.</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">이상있음 항목 → AI 챗봇으로 유사 사례 확인</div>
+          <div class="step-desc">이상있음으로 표시된 항목이 있다면, AI 챗봇에 "우리 학교에서 [해당 항목] 관련 지적 사례와 조치 방법을 알려줘"라고 질문하여 사전 대응 방안을 준비합니다.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">부서장 확인 후 감사실 제출</div>
+          <div class="step-desc">모든 항목 점검 완료 후 부서장 서명 → 감사실 제출. 감사실 관리자 현황판에서 실시간으로 제출 현황을 확인합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 데이터 갱신 -->
+<div class="section" id="s6">
+  <div class="sec-hdr">
+    <div class="sec-num">⑥</div>
+    <div><div class="sec-title">데이터 갱신 방법</div><div class="sec-sub">새로운 감사 사례 추가 및 연간 업데이트</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">신규 감사 사례 추가 방법</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">GitHub에서 index.html 열기</div>
+          <div class="step-desc"><code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">github.com/student378/2025audit</code> → index.html → 연필(✏️) 아이콘 클릭</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Ctrl+F로 "var D=" 검색</div>
+          <div class="step-desc">데이터 배열의 시작 위치를 찾습니다. 기존 항목 구조를 참고하여 새 항목을 추가합니다.</div>
+          <div style="background:#1e2a3a;border-radius:8px;padding:12px;margin-top:8px;font-family:monospace;font-size:11px;color:#93c5fd">
+            <span style="color:#6b7280">// 신규 사례 추가 예시</span><br>
+            {year:<span style="color:#fbbf24">2024</span>, inst:<span style="color:#86efac">'유한대학교'</span>, cat:<span style="color:#86efac">'학사'</span>,<br>
+            &nbsp;issue:<span style="color:#86efac">'보강 미실시 3건'</span>,<br>
+            &nbsp;action:<span style="color:#86efac">'주의'</span>, amount:<span style="color:#fbbf24">0</span>},
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Commit changes → 자동 배포</div>
+          <div class="step-desc">저장 후 1~2분 내 자동 반영됩니다. 별도 서버 작업 없이 즉시 업데이트됩니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip green"><div class="tip-icon">📅</div><div><b>권장 갱신 주기:</b> 교육부 감사 결과 공개 직후(연 1회) + 자체점검 영역 변경 시</div></div>
+  </div>
+</div>
+
+<!-- ⑦ 활용 시나리오 -->
+<div class="section" id="s7">
+  <div class="sec-hdr">
+    <div class="sec-num">⑦</div>
+    <div><div class="sec-title">실전 활용 시나리오</div><div class="sec-sub">상황별 사용 방법을 단계별로 안내합니다</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 시나리오 1 — 연간 감사 준비 (감사 3개월 전)</div>
+    <ul class="checklist">
+      <li>감사대시보드 "종합 대시보드" 탭에서 최근 3년 트렌드 파악</li>
+      <li>AI 챗봇에 "올해 중점 감사 예상 항목을 알려줘" 질문</li>
+      <li>"담당업무별 가이드" 탭에서 우리 부서 고위험 항목 목록 출력</li>
+      <li>자체점검 시스템으로 전 부서 사전 점검 실시</li>
+      <li class="done">감사실에서 전 부서 제출 현황 실시간 확인</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔍 시나리오 2 — 특정 사안 발생 시 즉시 검색</div>
+    <div class="step-desc" style="margin-bottom:12px">예: 시설팀에서 2,500만원 수의계약을 체결해야 할 상황</div>
+    <ul class="checklist">
+      <li>AI 챗봇에 "2천만원 이상 수의계약 관련 지적 사례와 요구 서류 알려줘" 질문</li>
+      <li>"지적사례 목록" 탭에서 "수의계약" 키워드로 유사 사례 전체 검색</li>
+      <li>지적 사례의 조치 내용을 참고하여 서류 사전 준비</li>
+      <li>자체점검 §4-1(계약관리) 항목 점검 후 이상유무 기록</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 시나리오 3 — 신임 담당자 온보딩</div>
+    <div class="step-desc" style="margin-bottom:12px">새로 부임한 담당자가 우리 부서 감사 위험 요소를 빠르게 파악해야 할 때</div>
+    <ul class="checklist">
+      <li>"담당업무별 가이드" 탭에서 담당 부서 선택</li>
+      <li>고위험 항목부터 순서대로 실제 현황과 대조</li>
+      <li>AI 챗봇에 "학생지원팀 신임 담당자가 가장 먼저 확인해야 할 것은?" 질문</li>
+      <li>"수감자료 준비가이드" 탭에서 평소 비치해야 할 서류 목록 파악</li>
+    </ul>
+    <div class="tip green"><div class="tip-icon">✅</div><div>이 시나리오대로 진행하면 신임 담당자가 <b>하루 안에</b> 감사 대응 체계를 파악할 수 있습니다.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ 빠른 참고 — 탭별 주요 용도 요약</div>
+    <table class="tbl">
+      <tr><th>탭</th><th>언제 사용?</th><th>소요 시간</th></tr>
+      <tr><td>📊 종합 대시보드</td><td>감사 준비 시작, 전체 현황 파악</td><td>5분</td></tr>
+      <tr><td>📋 지적사례 목록</td><td>특정 사안 유사 사례 검색</td><td>2~5분</td></tr>
+      <tr><td>🏫 대학별 현황</td><td>타 대학 벤치마킹</td><td>3분</td></tr>
+      <tr><td>📋 수감자료 가이드</td><td>감사장 비치 서류 준비</td><td>10분</td></tr>
+      <tr><td>🏢 담당업무별 가이드</td><td>부서별 점검 항목 확인 (★ 핵심)</td><td>10~15분</td></tr>
+      <tr><td>💬 AI 챗봇</td><td>복합적 질문, 의사결정 참고</td><td>즉시</td></tr>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showSec(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top: document.querySelector('.tab-nav').offsetTop - 10, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>행정업무 자체점검 시스템 활용 매뉴얼 | 유한대학교</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a3a6b;--blue:#2557a7;--blue2:#3b72c4;--blue-light:#dce9f8;
+  --green:#1a7f4b;--green-bg:#e6f7ef;--green-b:#7ecfa4;
+  --orange:#d97706;--orange-bg:#fef3c7;
+  --red:#b91c1c;--red-bg:#fde8e8;
+  --bg:#f0f4fa;--surf:#fff;--surf2:#f8fafd;
+  --txt:#1c2b3a;--txt2:#4a5c6a;--txt3:#8a9baa;
+  --border:#dde5ef;
+  --sh:0 2px 12px rgba(26,58,107,.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.7}
+.container{max-width:900px;margin:0 auto;padding:0 20px 80px}
+
+.header{background:linear-gradient(135deg,#1a7f4b 0%,#2563eb 100%);color:#fff;padding:40px 20px 32px;text-align:center}
+.header-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:14px}
+.header h1{font-size:26px;font-weight:900;line-height:1.3;margin-bottom:8px}
+.header p{font-size:13px;opacity:.8;margin-bottom:16px}
+.header-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.header-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:all .2s;white-space:nowrap}
+.header-btn.dept{background:#fff;color:var(--green)}
+.header-btn.admin{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.header-btn.audit{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.header-btn:hover{transform:translateY(-1px)}
+
+.tab-nav{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tab-nav-inner{max-width:900px;margin:0 auto;padding:0 20px;display:flex;overflow-x:auto}
+.tab-nav-inner::-webkit-scrollbar{display:none}
+.tnav-btn{flex-shrink:0;padding:14px 16px;font-size:12px;font-weight:700;color:var(--txt3);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tnav-btn.active,.tnav-btn:hover{color:var(--green);border-bottom-color:var(--green)}
+
+.section{display:none;padding-top:32px}
+.section.active{display:block}
+
+.sec-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+.sec-num{width:36px;height:36px;border-radius:10px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0}
+.sec-title{font-size:20px;font-weight:800;color:var(--navy);line-height:1.3}
+.sec-sub{font-size:12px;color:var(--txt3);margin-top:3px}
+
+.card{background:#fff;border-radius:14px;padding:22px 24px;margin-bottom:16px;box-shadow:var(--sh);border:1px solid var(--border)}
+.card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';display:inline-block;width:4px;height:16px;background:var(--green);border-radius:2px}
+
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:19px;top:42px;bottom:0;width:2px;background:var(--border)}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;position:relative;z-index:1}
+.step-body{flex:1;padding-bottom:24px}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;margin-top:8px}
+.step-desc{font-size:13px;color:var(--txt2);line-height:1.75}
+
+/* 화면 시뮬레이션 */
+.screen{background:#f0f4fa;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0}
+.screen-bar{background:var(--navy);padding:8px 14px;display:flex;align-items:center;gap:8px}
+.screen-dot{width:9px;height:9px;border-radius:50%}
+.screen-url{flex:1;background:rgba(255,255,255,.1);border-radius:4px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,.6);font-family:monospace}
+.screen-body{padding:16px}
+
+/* 역할 카드 */
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.role-card{border-radius:12px;padding:18px;border:2px solid var(--border)}
+.role-card.dept-role{border-color:var(--green-b);background:var(--green-bg)}
+.role-card.admin-role{border-color:#93c5fd;background:var(--blue-light)}
+.role-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.role-desc{font-size:12px;color:var(--txt2);line-height:1.7}
+.role-url{font-size:10px;font-family:monospace;color:var(--txt3);margin-top:8px}
+
+/* 폼 시뮬레이션 */
+.fake-form{display:flex;flex-direction:column;gap:10px}
+.fake-field{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.fake-field-label{font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:4px}
+.fake-field-val{font-size:12px;color:var(--txt)}
+.fake-select{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--txt2);display:flex;align-items:center;justify-content:space-between}
+.fake-check-row{display:flex;gap:8px;align-items:center;padding:8px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--txt2)}
+.fake-check-ok{color:var(--green);font-weight:700}
+.fake-check-ng{color:var(--red);font-weight:700}
+
+/* 현황판 시뮬레이션 */
+.fake-admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.fake-dept-card{border-radius:8px;padding:10px;text-align:center;font-size:10px;border:1px solid}
+.fake-dept-card.done{background:#e6f7ef;border-color:#7ecfa4;color:var(--green)}
+.fake-dept-card.pending{background:#fde8e8;border-color:#fca5a5;color:var(--red)}
+.fake-dept-card.partial{background:var(--orange-bg);border-color:#fcd34d;color:var(--orange)}
+.fake-dept-name{font-weight:700;margin-bottom:3px}
+.fake-dept-status{font-size:9px}
+
+/* 체크리스트 */
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;gap:10px;padding:10px 14px;background:var(--surf2);border-radius:8px;font-size:13px;color:var(--txt2);align-items:flex-start}
+.checklist li::before{content:'☐';font-size:16px;flex-shrink:0;color:var(--green);margin-top:1px}
+.checklist li.done::before{content:'☑';color:var(--green)}
+
+/* 팁 */
+.tip{border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12px;line-height:1.75;display:flex;gap:10px}
+.tip.blue{background:var(--blue-light);border-left:4px solid var(--blue)}
+.tip.green{background:var(--green-bg);border-left:4px solid var(--green)}
+.tip.orange{background:var(--orange-bg);border-left:4px solid var(--orange)}
+.tip.red{background:var(--red-bg);border-left:4px solid var(--red)}
+.tip-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* 테이블 */
+.tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+.tbl th{background:var(--green);color:#fff;padding:9px 12px;text-align:left;font-weight:700}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--txt2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:nth-child(even) td{background:var(--surf2)}
+
+/* 배지 */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-orange{background:var(--orange-bg);color:var(--orange)}
+
+/* 경보 박스 */
+.alert{border-radius:10px;padding:14px 16px;margin:12px 0;font-size:13px;line-height:1.75;border:1px solid}
+.alert.ok{background:var(--green-bg);border-color:var(--green-b);color:var(--green)}
+.alert.warn{background:var(--red-bg);border-color:#fca5a5;color:var(--red)}
+
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.cols2,.role-cards,.fake-admin-grid{grid-template-columns:1fr}}
+
+/* 타임라인 */
+.timeline{position:relative;padding-left:24px;border-left:2px solid var(--green);margin:12px 0}
+.tl-item{position:relative;margin-bottom:18px;padding-left:16px}
+.tl-item::before{content:'';position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid #fff;box-shadow:0 0 0 2px var(--green)}
+.tl-date{font-size:10px;font-weight:700;color:var(--green);margin-bottom:2px}
+.tl-content{font-size:12px;color:var(--txt2);line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">📗 공식 매뉴얼</div>
+  <h1>행정업무 종합<br>자체점검 시스템<br>활용 매뉴얼</h1>
+  <p>유한대학교 감사실 | 부서 담당자 · 감사실 관리자용 | 2026년 6월</p>
+  <div class="header-btns">
+    <a href="https://student378.github.io/check/" target="_blank" class="header-btn dept">✅ 부서 자체점검 입력</a>
+    <a href="https://student378.github.io/check/admin.html" target="_blank" class="header-btn admin">🔒 감사실 관리자</a>
+    <a href="https://student378.github.io/2025audit/" target="_blank" class="header-btn audit">🔍 감사사례 대시보드</a>
+  </div>
+</div>
+
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tnav-btn active" onclick="showSec('s1',this)">① 시스템 개요</button>
+    <button class="tnav-btn" onclick="showSec('s2',this)">② 부서 담당자</button>
+    <button class="tnav-btn" onclick="showSec('s3',this)">③ 감사실 관리자</button>
+    <button class="tnav-btn" onclick="showSec('s4',this)">④ 점검 영역 안내</button>
+    <button class="tnav-btn" onclick="showSec('s5',this)">⑤ 감사사례 연계</button>
+    <button class="tnav-btn" onclick="showSec('s6',this)">⑥ 연간 운영 일정</button>
+    <button class="tnav-btn" onclick="showSec('s7',this)">⑦ FAQ</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ① 시스템 개요 -->
+<div class="section active" id="s1">
+  <div class="sec-hdr">
+    <div class="sec-num">①</div>
+    <div><div class="sec-title">시스템 개요 — 누가, 무엇을, 어떻게?</div><div class="sec-sub">자체점검 시스템의 역할과 두 사용자 유형을 설명합니다</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">기존 방식의 문제점</div>
+    <div class="cols2">
+      <div class="tip red"><div class="tip-icon">❌</div><div><b>기존 방식</b><br>종이 점검표 수기 작성 → 감사실 직접 수거(3~5일) → 수합 후 수작업 집계 → 미제출 부서 개별 전화 독촉</div></div>
+      <div class="tip green"><div class="tip-icon">✅</div><div><b>현재 방식</b><br>웹 입력 즉시 제출 → 감사실 실시간 확인 → 미제출 부서 자동 표시 → 독촉 전화 0건</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">두 가지 사용자 역할</div>
+    <div class="role-cards">
+      <div class="role-card dept-role">
+        <div class="role-title">📋 부서 담당자 (각 부서)</div>
+        <div class="role-desc">
+          • 7개 점검 영역, 40+개 세부항목 입력<br>
+          • 이상유무 체크 + 특이사항 메모<br>
+          • 부서장 확인 후 최종 제출<br>
+          • 감사 사례 대시보드 연계 참고
+        </div>
+        <div class="role-url">접속: student378.github.io/check/</div>
+      </div>
+      <div class="role-card admin-role">
+        <div class="role-title">🔒 감사실 관리자</div>
+        <div class="role-desc">
+          • 전 부서 제출 현황 실시간 모니터링<br>
+          • 미제출 부서 즉시 확인<br>
+          • 연도별 이력 조회<br>
+          • 점검 항목 직접 편집 가능
+        </div>
+        <div class="role-url">접속: student378.github.io/check/admin.html</div>
+      </div>
+    </div>
+    <div class="tip blue"><div class="tip-icon">🔗</div><div>두 시스템은 <b>교육부 감사 AI 대시보드</b>와 연계되어 있습니다. 점검 중 언제든 "🔍 감사 사례 참고" 버튼으로 유사 지적 사례를 즉시 확인할 수 있습니다.</div></div>
+  </div>
+</div>
+
+<!-- ② 부서 담당자 사용법 -->
+<div class="section" id="s2">
+  <div class="sec-hdr">
+    <div class="sec-num">②</div>
+    <div><div class="sec-title">부서 담당자 — 점검 입력부터 제출까지</div><div class="sec-sub">접속 후 4단계로 완료됩니다. 총 소요 시간: 20~30분</div></div>
+  </div>
+
+  <div class="card">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">접속 및 부서·담당자 정보 입력</div>
+          <div class="step-desc"><code style="background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:4px;font-size:11px">student378.github.io/check/</code> 접속 → "▶ 시작하기" 클릭</div>
+          <div class="screen" style="margin-top:10px">
+            <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">student378.github.io/check/dept.html</div></div>
+            <div class="screen-body">
+              <div class="fake-form">
+                <div class="fake-field"><div class="fake-field-label">학년도</div><div class="fake-field-val">2025학년도 ▼</div></div>
+                <div class="fake-field"><div class="fake-field-label">부서명</div><div class="fake-field-val">학생복지팀 ▼</div></div>
+                <div class="fake-field"><div class="fake-field-label">담당자</div><div class="fake-field-val">최광균</div></div>
+                <div style="background:var(--green);color:#fff;border-radius:8px;padding:10px;text-align:center;font-size:12px;font-weight:700">▶ 점검 시작</div>
+              </div>
+            </div>
+          </div>
+          <div class="tip blue"><div class="tip-icon">💡</div><div>이전에 임시저장한 내용이 있으면 자동으로 불러옵니다. "다시 시작"을 누르면 초기화됩니다.</div></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">영역 선택 및 세부항목 점검</div>
+          <div class="step-desc">7개 점검 영역이 목록으로 표시됩니다. 우리 부서에 해당하는 영역을 클릭하여 세부항목을 점검합니다.</div>
+          <div class="screen" style="margin-top:10px">
+            <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">점검 입력 — §6 학사관리</div></div>
+            <div class="screen-body">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                <span style="font-size:11px;font-weight:700;color:var(--navy)">§6 학사관리 — 3/5 완료</span>
+                <span style="font-size:10px;color:var(--txt3)">🔍 감사 사례 참고</span>
+              </div>
+              <div class="fake-check-row"><span>① 수업일수 및 수업시간 준수 여부</span><span class="fake-check-ok" style="margin-left:auto">✅ 무</span></div>
+              <div class="fake-check-row" style="margin-top:6px"><span>② 결강 후 보강 실시 여부</span><span class="fake-check-ng" style="margin-left:auto">❌ 유</span></div>
+              <div style="margin-top:6px;background:#fde8e8;border-radius:6px;padding:8px;font-size:10px;color:var(--red)">특이사항: 2024년 2학기 3건 미실시, 현재 보강 완료</div>
+              <div class="fake-check-row" style="margin-top:6px"><span>③ 출석미달 성적 부여 여부</span><span style="margin-left:auto;color:var(--txt3);font-size:10px">미점검</span></div>
+            </div>
+          </div>
+          <div class="tip orange"><div class="tip-icon">⚠️</div><div><b>이상있음(유)</b> 선택 시 반드시 특이사항 메모를 작성하세요. 감사 대응 시 해명 자료로 활용됩니다.</div></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">감사 사례 참고 (연계 기능)</div>
+          <div class="step-desc">이상있음 항목이 있거나 판단이 어려운 항목은 상단의 <span class="badge badge-blue">🔍 감사 사례 참고</span> 버튼을 클릭하여 교육부 감사 대시보드를 참고합니다.</div>
+          <table class="tbl" style="margin-top:10px">
+            <tr><th>점검 영역</th><th>감사대시보드 연계 탭</th><th>참고 방법</th></tr>
+            <tr><td>§1 인사관리</td><td>담당업무별 가이드 > 인사·채용팀</td><td>고위험 항목 확인</td></tr>
+            <tr><td>§2 예산회계</td><td>담당업무별 가이드 > 기획·예산팀</td><td>법인카드, 결산 기한</td></tr>
+            <tr><td>§3 연구비</td><td>담당업무별 가이드 > 연구·산학팀</td><td>인건비, 과제 종료 후 집행</td></tr>
+            <tr><td>§6 학사관리</td><td>담당업무별 가이드 > 교무·학사팀</td><td>보강, 장학금 기준</td></tr>
+            <tr><td>§7 시설관리</td><td>담당업무별 가이드 > 시설·안전팀</td><td>안전점검, 수의계약</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">부서장 확인 및 최종 제출</div>
+          <div class="step-desc">모든 항목 점검 완료 후 "→ 제출 단계" 클릭 → 결과 요약 확인 → 부서장 이름 입력(서명) → "✅ 감사실에 최종 제출" 클릭</div>
+          <div class="screen" style="margin-top:10px">
+            <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">제출 단계 — 최종 확인</div></div>
+            <div class="screen-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+                <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--navy)">42</div><div style="font-size:10px;color:var(--txt3)">전체 항목</div></div>
+                <div style="background:var(--green-bg);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--green-b)"><div style="font-size:20px;font-weight:800;color:var(--green)">39</div><div style="font-size:10px;color:var(--green)">이상없음</div></div>
+                <div style="background:var(--red-bg);border-radius:8px;padding:10px;text-align:center;border:1px solid #fca5a5"><div style="font-size:20px;font-weight:800;color:var(--red)">3</div><div style="font-size:10px;color:var(--red)">이상있음</div></div>
+              </div>
+              <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px">
+                <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px">🔏 부서장 최종 확인</div>
+                <div style="background:var(--surf2);border-radius:6px;padding:8px;font-size:11px;color:var(--txt2)">부서장 서명: <span style="color:var(--navy);font-weight:700">최광균</span></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <div style="flex:1;background:var(--green);color:#fff;border-radius:8px;padding:10px;text-align:center;font-size:11px;font-weight:700">✅ 감사실에 최종 제출</div>
+                <div style="background:var(--orange-bg);border:1px solid #fcd34d;border-radius:8px;padding:10px;font-size:11px;font-weight:700;color:var(--orange)">← 수정</div>
+              </div>
+              <div style="margin-top:10px;background:var(--blue-light);border:1px solid #93c5fd;border-radius:8px;padding:10px;font-size:11px;color:var(--blue)">
+                📚 이상있음 항목이 있습니다. <b>🔍 감사 사례 대시보드 바로가기 →</b>
+              </div>
+            </div>
+          </div>
+          <div class="alert ok" style="margin-top:12px">✅ 제출 완료 후 감사실 관리자 현황판에 즉시 반영됩니다. 제출 완료 문자/이메일은 별도로 발송되지 않습니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">부서 담당자 자주 묻는 것</div>
+    <table class="tbl">
+      <tr><th>상황</th><th>해결 방법</th></tr>
+      <tr><td>중간에 작업 중단해야 할 때</td><td>💾 임시저장 클릭 → 나중에 같은 PC에서 접속하면 자동 복원</td></tr>
+      <tr><td>제출 후 내용 수정이 필요할 때</td><td>감사실 담당자에게 연락 → 반려 처리 후 재입력 가능</td></tr>
+      <tr><td>항목 의미가 불분명할 때</td><td>🔍 감사 사례 참고 버튼 → AI 챗봇에 질문</td></tr>
+      <tr><td>우리 부서에 해당 없는 항목</td><td>이상없음(무) 선택 + 특이사항에 "해당 없음" 메모</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ③ 감사실 관리자 -->
+<div class="section" id="s3">
+  <div class="sec-hdr">
+    <div class="sec-num">③</div>
+    <div><div class="sec-title">감사실 관리자 — 현황 모니터링 및 관리</div><div class="sec-sub">전 부서 제출 현황을 실시간으로 파악합니다</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">관리자 화면 구성</div>
+    <div class="screen">
+      <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">student378.github.io/check/admin.html — 감사실 관리자</div></div>
+      <div class="screen-body">
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="background:var(--green-bg);border:1px solid var(--green-b);border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--green)">✅ 제출완료 9개</div>
+          <div style="background:var(--red-bg);border:1px solid #fca5a5;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--red)">⏳ 미제출 5개</div>
+          <div style="background:var(--orange-bg);border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--orange)">🔄 임시저장 2개</div>
+        </div>
+        <div class="fake-admin-grid">
+          <div class="fake-dept-card done"><div class="fake-dept-name">학생복지팀</div><div class="fake-dept-status">✅ 제출완료<br>2025-06-10</div></div>
+          <div class="fake-dept-card done"><div class="fake-dept-name">총무회계팀</div><div class="fake-dept-status">✅ 제출완료<br>2025-06-09</div></div>
+          <div class="fake-dept-card pending"><div class="fake-dept-name">시설안전팀</div><div class="fake-dept-status">⏳ 미제출<br>독촉 필요</div></div>
+          <div class="fake-dept-card partial"><div class="fake-dept-name">산학협력단</div><div class="fake-dept-status">💾 임시저장<br>진행중</div></div>
+        </div>
+        <div style="background:var(--red-bg);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--red);font-weight:700">⚠️ 미제출 부서: 시설안전팀, 입학지원팀, 법인사무국 외 2개 — 제출 기한 D-3</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">관리자 주요 기능</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:var(--navy)">A</div>
+        <div class="step-body">
+          <div class="step-title">전체 현황 대시보드</div>
+          <div class="step-desc">접속 즉시 전 부서 제출 상태(완료/미제출/임시저장)를 카드 형태로 확인합니다. 미제출 부서는 빨간색으로 강조 표시됩니다.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--navy)">B</div>
+        <div class="step-body">
+          <div class="step-title">부서별 상세 내용 열람</div>
+          <div class="step-desc">부서 카드 클릭 → 해당 부서의 전체 점검 항목과 이상있음 내역을 확인합니다. 특이사항 메모도 함께 표시됩니다.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--navy)">C</div>
+        <div class="step-body">
+          <div class="step-title">연도 변경 및 이력 조회</div>
+          <div class="step-desc">상단 연도 선택 드롭다운으로 과거 학년도 자체점검 결과를 조회할 수 있습니다. 개선 추이를 연도별로 비교합니다.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--navy)">D</div>
+        <div class="step-body">
+          <div class="step-title">점검 항목 편집</div>
+          <div class="step-desc">"항목 편집" 버튼 클릭 → 자체점검 세부항목을 직접 추가·수정·삭제합니다. 감사 지적 유형이 변경될 때 항목을 갱신합니다.</div>
+          <div class="tip green"><div class="tip-icon">✅</div><div>교육부 감사 대시보드에서 새로운 지적 패턴이 확인되면, 해당 항목을 자체점검 목록에 즉시 추가하세요.</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--navy)">E</div>
+        <div class="step-body">
+          <div class="step-title">인쇄 및 PDF 출력</div>
+          <div class="step-desc">전체 결과 또는 부서별 결과를 인쇄/PDF로 출력합니다. 감사 시 제출 자료로 활용합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 점검 영역 안내 -->
+<div class="section" id="s4">
+  <div class="sec-hdr">
+    <div class="sec-num">④</div>
+    <div><div class="sec-title">7개 점검 영역 안내</div><div class="sec-sub">각 영역별 주요 항목과 담당 부서를 안내합니다</div></div>
+  </div>
+
+  <div class="card">
+    <table class="tbl">
+      <tr><th>영역</th><th>주요 점검 항목</th><th>주담당 부서</th><th>위험도</th></tr>
+      <tr>
+        <td><b>§1 인사관리</b></td>
+        <td>채용 단계별 서류, 임용보고, 승진·재임용 절차, 교원 겸직, 복무관리</td>
+        <td>학사지원팀</td>
+        <td><span class="badge badge-red">🔴 고위험</span></td>
+      </tr>
+      <tr>
+        <td><b>§2 예산회계</b></td>
+        <td>예·결산 이사회 제출, 법인카드, 수의계약, 재산관리, 등록금 수입</td>
+        <td>총무회계팀<br>전략기획팀</td>
+        <td><span class="badge badge-red">🔴 고위험</span></td>
+      </tr>
+      <tr>
+        <td><b>§3 연구비</b></td>
+        <td>연구비 집행, 인건비 지급, 연구결과물 제출, 간접비 관리</td>
+        <td>산학협력단</td>
+        <td><span class="badge badge-orange">🟠 중위험</span></td>
+      </tr>
+      <tr>
+        <td><b>§4 물품·기자재</b></td>
+        <td>물품구매 계약, 재산대장 관리, 기자재 등록, 불용 처리</td>
+        <td>총무회계팀</td>
+        <td><span class="badge badge-orange">🟠 중위험</span></td>
+      </tr>
+      <tr>
+        <td><b>§5 입학·정보공시</b></td>
+        <td>전형 절차 준수, 모집요강 준수, 정보공시 기한, 개인정보 보호</td>
+        <td>입학지원팀<br>정보팀</td>
+        <td><span class="badge badge-orange">🟠 중위험</span></td>
+      </tr>
+      <tr>
+        <td><b>§6 학사관리</b></td>
+        <td>수업일수, 보강 실시, 출석미달 성적, 장학금 지급 기준</td>
+        <td>교무처<br>학생복지팀</td>
+        <td><span class="badge badge-orange">🟠 중위험</span></td>
+      </tr>
+      <tr>
+        <td><b>§7 시설관리</b></td>
+        <td>안전점검 실시 기록, 공사 계약·감리, 하자보수 관리</td>
+        <td>시설안전팀</td>
+        <td><span class="badge badge-orange">🟠 중위험</span></td>
+      </tr>
+    </table>
+    <div class="tip blue"><div class="tip-icon">💡</div><div>부서에 따라 여러 영역에 걸쳐 점검이 필요할 수 있습니다. 본인 부서와 관련 있는 모든 영역을 점검하세요.</div></div>
+  </div>
+</div>
+
+<!-- ⑤ 감사사례 연계 -->
+<div class="section" id="s5">
+  <div class="sec-hdr">
+    <div class="sec-num">⑤</div>
+    <div><div class="sec-title">교육부 감사사례 대시보드 연계</div><div class="sec-sub">두 시스템을 함께 사용하는 방법</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">연계 사용 흐름</div>
+    <div style="display:flex;gap:0;align-items:stretch;flex-wrap:wrap">
+      <div style="flex:1;min-width:160px;background:var(--blue-light);border-radius:12px 0 0 12px;padding:16px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">🔍</div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px">감사 대시보드</div>
+        <div style="font-size:11px;color:var(--txt2)">담당업무별 가이드에서<br>우리 부서 고위험 항목 확인</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 8px;font-size:20px;color:var(--txt3)">→</div>
+      <div style="flex:1;min-width:160px;background:var(--green-bg);border-radius:0;padding:16px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">✅</div>
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:4px">자체점검 입력</div>
+        <div style="font-size:11px;color:var(--txt2)">해당 영역 세부항목<br>이상유무 입력</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 8px;font-size:20px;color:var(--txt3)">→</div>
+      <div style="flex:1;min-width:160px;background:var(--orange-bg);border-radius:0 12px 12px 0;padding:16px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">📋</div>
+        <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:4px">사전 예방</div>
+        <div style="font-size:11px;color:var(--txt2)">이상있음 항목<br>선제적 조치 완료</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">§ 번호와 감사대시보드 연결표</div>
+    <table class="tbl">
+      <tr><th>자체점검 영역</th><th>감사대시보드 연계 항목</th><th>주요 자체점검 §번호</th></tr>
+      <tr><td>§1 인사관리</td><td>채용·인사팀 가이드 > ⚠️ 고위험</td><td>§1-1 복무, §1-2 채용, §1-3 겸직</td></tr>
+      <tr><td>§2 예산회계</td><td>기획·예산팀 가이드 > ⚠️ 고위험</td><td>§2-1 예결산, §2-2 법인카드</td></tr>
+      <tr><td>§3 연구비</td><td>연구·산학팀 가이드 > ⚠️ 고위험</td><td>§3-1 집행, §3-2 인건비, §3-3 결과물</td></tr>
+      <tr><td>§4 물품기자재</td><td>총무·재무팀 가이드 > 📌 중위험</td><td>§4-1 계약, §4-2 재산대장</td></tr>
+      <tr><td>§5 정보공시</td><td>정보·공시팀 가이드 > ℹ️ 주의</td><td>§5-1 공시기한, §5-2 개인정보</td></tr>
+      <tr><td>§6 학사관리</td><td>교무·학사팀 / 학생지원팀 가이드</td><td>§6-2 수업, §6-3 장학금</td></tr>
+      <tr><td>§7 시설관리</td><td>시설·안전팀 가이드 > ⚠️ 고위험</td><td>§7-1 계약, §7-2 준공, §7-3 안전</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ⑥ 연간 운영 일정 -->
+<div class="section" id="s6">
+  <div class="sec-hdr">
+    <div class="sec-num">⑥</div>
+    <div><div class="sec-title">연간 운영 일정</div><div class="sec-sub">학년도 기준 자체점검 운영 타임라인</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">권장 운영 일정</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-date">3월 초</div><div class="tl-content"><b>연도 설정 및 항목 갱신</b> — 감사실 관리자가 올해 학년도 설정, 전년도 교육부 감사 사례 반영하여 점검 항목 업데이트</div></div>
+      <div class="tl-item"><div class="tl-date">3~4월</div><div class="tl-content"><b>1차 자체점검</b> — 전 부서 점검 입력 및 제출. 감사실은 미제출 부서 모니터링 및 독려</div></div>
+      <div class="tl-item"><div class="tl-date">5월</div><div class="tl-content"><b>고위험 항목 집중 점검</b> — 1차 결과에서 이상있음 부서 대상 추가 점검 및 소명 자료 준비</div></div>
+      <div class="tl-item"><div class="tl-date">6월</div><div class="tl-content"><b>감사 대비 최종 점검</b> — 감사대시보드 AI 챗봇으로 당해 연도 중점 예상 항목 파악 및 최종 서류 점검</div></div>
+      <div class="tl-item"><div class="tl-date">9월</div><div class="tl-content"><b>2차 자체점검</b> — 하반기 변경 사항 반영, 신임 담당자 온보딩 활용</div></div>
+      <div class="tl-item"><div class="tl-date">11~12월</div><div class="tl-content"><b>연간 결과 정리</b> — 전체 결과 PDF 출력 및 보관, 내년도 항목 개선 사항 검토</div></div>
+    </div>
+    <div class="tip green"><div class="tip-icon">✅</div><div>교육부 감사 결과가 연말에 공개되면, 신규 지적 사례를 대시보드 데이터에 추가하고 자체점검 항목에도 반영합니다.</div></div>
+  </div>
+</div>
+
+<!-- ⑦ FAQ -->
+<div class="section" id="s7">
+  <div class="sec-hdr">
+    <div class="sec-num">⑦</div>
+    <div><div class="sec-title">자주 묻는 질문 (FAQ)</div><div class="sec-sub">현장에서 자주 발생하는 질문과 답변입니다</div></div>
+  </div>
+
+  <div class="card">
+    <table class="tbl">
+      <tr><th style="width:40%">질문</th><th>답변</th></tr>
+      <tr><td>제출 후 내용을 수정할 수 있나요?</td><td>제출 후 수정은 감사실 관리자가 해당 부서를 "반려" 처리해야 가능합니다. 감사실 담당자에게 연락하세요.</td></tr>
+      <tr><td>임시저장은 어디에 저장되나요?</td><td>현재 사용 중인 컴퓨터의 브라우저(localStorage)에 저장됩니다. 다른 컴퓨터에서는 불러올 수 없습니다.</td></tr>
+      <tr><td>우리 부서와 관계없는 항목은 어떻게 하나요?</td><td>이상없음(무) 선택 후 특이사항에 "해당 없음"이라고 메모하면 됩니다.</td></tr>
+      <tr><td>이상있음 항목이 있으면 감사에서 문제가 되나요?</td><td>이상있음 자체가 문제가 아닙니다. 이미 인지하고 조치 중임을 소명하면 감사 대응에 유리합니다. 특이사항 메모에 조치 내용을 기록해두세요.</td></tr>
+      <tr><td>감사실 관리자 페이지 접근 방법은?</td><td>student378.github.io/check/admin.html 직접 접속합니다. 감사실 담당자만 알고 있는 URL로 접근을 제한합니다.</td></tr>
+      <tr><td>새 점검 항목을 추가하려면?</td><td>감사실 관리자 화면 → "항목 편집" → 원하는 영역에 항목 추가. 저장 즉시 모든 부서의 점검 화면에 반영됩니다.</td></tr>
+      <tr><td>모바일에서도 사용 가능한가요?</td><td>반응형으로 제작되어 스마트폰에서도 입력 가능합니다. 다만 꼼꼼한 점검을 위해 PC 사용을 권장합니다.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">문의 및 지원</div>
+    <div class="cols2">
+      <div class="tip blue"><div class="tip-icon">📞</div><div><b>시스템 문의</b><br>학생복지팀 최광균<br>내선: 0000</div></div>
+      <div class="tip green"><div class="tip-icon">📧</div><div><b>감사실 문의</b><br>감사실 담당자<br>내선: 0330</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showSec(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top: document.querySelector('.tab-nav').offsetTop - 10, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
