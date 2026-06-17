@@ -528,41 +528,144 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt)
 <div class="section" id="s6">
   <div class="sec-hdr">
     <div class="sec-num">⑥</div>
-    <div><div class="sec-title">데이터 갱신 방법</div><div class="sec-sub">새로운 감사 사례 추가 및 연간 업데이트</div></div>
+    <div><div class="sec-title">데이터 갱신 방법</div><div class="sec-sub">엑셀·PDF 업로드로 신규 감사 사례를 자동 병합합니다</div></div>
   </div>
 
   <div class="card">
-    <div class="card-title">신규 감사 사례 추가 방법</div>
+    <div class="card-title">🆕 업데이트 도구 사용 (권장)</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:14px">
+      별도 제공된 <b>감사지적사례 데이터 업데이트 도구</b>를 사용하면 코드를 전혀 건드리지 않아도 됩니다.<br>
+      엑셀 또는 PDF를 올리면 자동으로 파싱·병합하여 배포 가능한 index.html 파일을 바로 만들어줍니다.
+    </p>
+
+    <div class="cols2" style="margin-bottom:16px">
+      <div class="tip green"><div class="tip-icon">✅</div><div><b>엑셀 업로드</b><br>.xlsx / .xls / .csv 지원. 컬럼 자동 매핑 후 병합.</div></div>
+      <div class="tip blue"><div class="tip-icon">📑</div><div><b>PDF 업로드</b><br>텍스트 레이어가 있는 PDF에서 자동 추출.</div></div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">업데이트 도구 열기</div>
+          <div class="step-desc">제공된 <code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">감사지적사례_데이터업데이트.html</code> 파일을 브라우저에서 엽니다. (인터넷 연결 필요, 서버 불필요)</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">현재 운영 중인 index.html 업로드</div>
+          <div class="step-desc">GitHub에서 내려받은 현재 감사대시보드 <code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">index.html</code>을 Step 1 영역에 올립니다. 기존 994건(이상) 데이터를 자동 인식합니다.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">신규 감사 사례 파일 업로드</div>
+          <div class="step-desc">교육부 감사 결과 엑셀 또는 PDF를 Step 2 영역에 올립니다.</div>
+          <div style="margin-top:10px">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">엑셀 권장 컬럼 형식</div>
+            <table class="tbl">
+              <tr><th>기관명</th><th>감사유형</th><th>지적내용</th><th>관련법령</th><th>조치내용</th><th>재정조치액</th><th>카테고리</th></tr>
+              <tr><td style="color:var(--txt2)">A대학</td><td style="color:var(--txt2)">종합감사</td><td style="color:var(--txt2)">법인카드 심야 사용...</td><td style="color:var(--txt2)">사학기관재무규칙...</td><td style="color:var(--txt2)">경고(3명)</td><td style="color:var(--txt2)">2,400,000</td><td style="color:var(--txt2)">예산·회계</td></tr>
+            </table>
+            <div class="tip blue" style="margin-top:8px"><div class="tip-icon">💡</div><div>컬럼명이 달라도 됩니다. 매핑 단계에서 직접 연결할 수 있습니다. 카테고리가 없으면 지적내용 키워드로 자동 분류합니다.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">컬럼 매핑 확인 → 미리보기</div>
+          <div class="step-desc">엑셀 열과 데이터 필드가 자동으로 연결됩니다. 잘못된 항목은 드롭다운으로 수정 후 "미리보기" 버튼 클릭. 파싱된 신규 데이터를 50건 미리 확인합니다.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">병합 → 다운로드</div>
+          <div class="step-desc">"기존 데이터에 병합" 버튼 클릭. <b>기관명 + 지적내용</b> 조합으로 중복을 자동 제거하고 병합합니다. 완성된 <code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">index_updated_날짜.html</code> 파일을 다운로드합니다.</div>
+          <div class="tip green" style="margin-top:8px"><div class="tip-icon">✅</div><div>다운로드된 파일을 GitHub 저장소에 올리면 1~2분 내 자동 반영됩니다.</div></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">GitHub에 배포</div>
+          <div class="step-desc"><code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">github.com/student378/2025audit</code> → index.html → ✏️ Edit → 전체 선택(Ctrl+A) → 붙여넣기 → Commit changes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 카테고리 자동 분류 기준</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">카테고리 열이 없으면 지적내용 텍스트에서 아래 키워드를 찾아 자동 분류합니다.</p>
+    <table class="tbl">
+      <tr><th>카테고리</th><th>주요 키워드</th></tr>
+      <tr><td><b>예산·회계</b></td><td>법인카드, 예산, 결산, 회계, 수당, 급여, 이월, 등록금, 기부금, 법정경비, 보수, 여비</td></tr>
+      <tr><td><b>채용·인사</b></td><td>채용, 임용, 승진, 재임용, 인사, 심사위원, 면접, 결격</td></tr>
+      <tr><td><b>계약·입찰</b></td><td>수의계약, 입찰, 경쟁, 계약, 발주, 지체상금, G2B, 전자조달</td></tr>
+      <tr><td><b>시설·공사</b></td><td>시설, 공사, 준공, 설계, 감리, 하자, 안전점검, 전기, 소방</td></tr>
+      <tr><td><b>연구비·과제</b></td><td>연구비, 연구과제, 인건비, 연구노트, 간접비, 산학, 차명</td></tr>
+      <tr><td><b>교육·학사</b></td><td>수업, 강의, 결강, 보강, 성적, 장학, 출석, 학사, 전형</td></tr>
+      <tr><td><b>복무·겸직</b></td><td>겸직, 복무, 국외여행, 출강, 연가</td></tr>
+      <tr><td><b>징계·법령</b></td><td>징계, 징계위, 법규위반, 처분</td></tr>
+      <tr><td><b>개인정보·공시</b></td><td>개인정보, 정보공시, 공시, CCTV</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✏️ 소량 추가 시 — 직접 편집 방법 (선택)</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">1~2건만 추가할 경우 GitHub에서 직접 편집하는 것이 더 빠를 수 있습니다.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
         <div class="step-body">
           <div class="step-title">GitHub에서 index.html 열기</div>
-          <div class="step-desc"><code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">github.com/student378/2025audit</code> → index.html → 연필(✏️) 아이콘 클릭</div>
+          <div class="step-desc"><code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">github.com/student378/2025audit</code> → index.html → ✏️ 클릭</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <div class="step-title">Ctrl+F로 "var D=" 검색</div>
-          <div class="step-desc">데이터 배열의 시작 위치를 찾습니다. 기존 항목 구조를 참고하여 새 항목을 추가합니다.</div>
-          <div style="background:#1e2a3a;border-radius:8px;padding:12px;margin-top:8px;font-family:monospace;font-size:11px;color:#93c5fd">
-            <span style="color:#6b7280">// 신규 사례 추가 예시</span><br>
-            {year:<span style="color:#fbbf24">2024</span>, inst:<span style="color:#86efac">'유한대학교'</span>, cat:<span style="color:#86efac">'학사'</span>,<br>
-            &nbsp;issue:<span style="color:#86efac">'보강 미실시 3건'</span>,<br>
-            &nbsp;action:<span style="color:#86efac">'주의'</span>, amount:<span style="color:#fbbf24">0</span>},
+          <div class="step-title">Ctrl+F로 "var D=[" 검색 후 마지막 항목 뒤에 추가</div>
+          <div style="background:#1e2a3a;border-radius:8px;padding:12px;margin-top:8px;font-family:monospace;font-size:11px;color:#93c5fd;line-height:1.8">
+            <span style="color:#6b7280">// 마지막 } 뒤에 쉼표 후 추가</span><br>
+            {<span style="color:#e2e8f0">"institution"</span>: <span style="color:#86efac">"유한대학교"</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"auditType"</span>: <span style="color:#86efac">"종합감사"</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"issue"</span>: <span style="color:#86efac">"보강 미실시 3건"</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"law"</span>: <span style="color:#86efac">"고등교육법 시행령 제14조"</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"action"</span>: <span style="color:#86efac">"주의(3명)"</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"amount"</span>: <span style="color:#fbbf24">0</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"persons"</span>: <span style="color:#fbbf24">3</span>,<br>
+            &nbsp;<span style="color:#e2e8f0">"category"</span>: <span style="color:#86efac">"교육·학사"</span>}
           </div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <div class="step-title">Commit changes → 자동 배포</div>
-          <div class="step-desc">저장 후 1~2분 내 자동 반영됩니다. 별도 서버 작업 없이 즉시 업데이트됩니다.</div>
+          <div class="step-title">Commit changes → 1~2분 후 자동 반영</div>
+          <div class="step-desc">저장 후 별도 서버 작업 없이 즉시 업데이트됩니다.</div>
         </div>
       </div>
     </div>
-    <div class="tip green"><div class="tip-icon">📅</div><div><b>권장 갱신 주기:</b> 교육부 감사 결과 공개 직후(연 1회) + 자체점검 영역 변경 시</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 권장 갱신 주기</div>
+    <table class="tbl">
+      <tr><th>시기</th><th>작업 내용</th><th>방법</th></tr>
+      <tr><td><b>연 1회 (교육부 감사 결과 공개 후)</b></td><td>신규 감사 사례 대량 추가</td><td>업데이트 도구 — 엑셀/PDF 업로드</td></tr>
+      <tr><td><b>수시 (1~5건)</b></td><td>개별 사례 즉시 추가</td><td>GitHub 직접 편집</td></tr>
+      <tr><td><b>연 1회 (자체점검 변경 시)</b></td><td>담당업무별 가이드 체크포인트 갱신</td><td>GitHub 직접 편집</td></tr>
+    </table>
   </div>
 </div>
 
