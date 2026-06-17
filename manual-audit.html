@@ -152,11 +152,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt)
     <button class="tnav-btn active" onclick="showSec('s1',this)">① 시스템 개요</button>
     <button class="tnav-btn" onclick="showSec('s2',this)">② 제작 과정</button>
     <button class="tnav-btn" onclick="showSec('s3',this)">③ 탭별 기능</button>
-    <button class="tnav-btn" onclick="showSec('s4',this)">④ AI챗봇 활용</button>
+    <button class="tnav-btn" onclick="showSec('s4',this)">④ 검색챗봇 활용</button>
     <button class="tnav-btn" onclick="showSec('s5',this)">⑤ 자체점검 연계</button>
     <button class="tnav-btn" onclick="showSec('s6',this)">⑥ 데이터 갱신</button>
-    <button class="tnav-btn" onclick="showSec('s7',this)">⑦ 활용 시나리오</button>
-  </div>
+    <button class="tnav-btn" onclick="showSec('s7',this)">⑦ 활용 시나리오</button>  </div>
 </nav>
 
 <div class="container">
@@ -264,6 +263,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt)
           <div class="step-desc">Google AI Studio에서 Gemini API 키를 발급받고 GAS 프록시를 통해 연동합니다. 사용자가 자연어로 질문하면 994건 데이터 중 관련 사례를 즉시 매칭합니다.</div>
           <div class="tip green"><div class="tip-icon">🔑</div><div><b>API 키 발급:</b> aistudio.google.com → API Keys → Create API Key (무료 티어로 일일 충분)</div></div>
           <div class="tip orange"><div class="tip-icon">⚠️</div><div><b>보안:</b> API 키는 반드시 GAS(서버사이드)에만 저장. HTML에 직접 넣으면 안 됩니다.</div></div>
+          <div class="tip blue"><div class="tip-icon">ℹ️</div><div><b>현재 운영 상태:</b> Gemini API 연동은 설계·구현은 완료되어 있으나, 현재는 비활성(GEMINI_ENABLED = false) 상태입니다. 검색챗봇은 내장된 994건 데이터를 키워드로 즉시 검색하는 방식으로 동작 중입니다.</div></div>
         </div>
       </div>
 
@@ -378,42 +378,106 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt)
   </div>
 </div>
 
-<!-- ④ AI챗봇 활용 -->
+<!-- ④ 검색챗봇 활용 -->
 <div class="section" id="s4">
   <div class="sec-hdr">
     <div class="sec-num">④</div>
-    <div><div class="sec-title">AI 검색챗봇 활용법</div><div class="sec-sub">💬 탭 — Gemini API 기반 자연어 검색</div></div>
+    <div><div class="sec-title">검색챗봇 활용법</div><div class="sec-sub">💬 탭 — 994건 데이터 키워드 즉시 검색</div></div>
   </div>
 
   <div class="card">
-    <div class="card-title">챗봇이 하는 일</div>
-    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">자연어로 질문하면 994건 감사 데이터 중 관련 사례를 즉시 찾아줍니다. 기존 키워드 검색으로는 놓치는 <strong>의미적 유사 사례</strong>까지 매칭합니다.</p>
-    <div class="screen">
-      <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">student378.github.io/2025audit/ — 💬 AI 검색챗봇</div></div>
-      <div class="screen-body">
-        <div class="fake-chat">
-          <div class="fake-chat-q">Q. 시설 공사 관련해서 어떤 유형의 지적이 많이 발생했어?</div>
-          <div class="fake-chat-a">시설·공사 관련 지적은 118건으로 전체 12%를 차지합니다. 주요 유형은 ① 수의계약 근거 미비(43건) ② 설계·감리 동일업체 발주(28건) ③ 안전점검 기록 미보존(18건) 순입니다. 특히 2천만원 이상 수의계약 시 법령 근거를 구체적으로 기재하지 않은 사례가 가장 많습니다.</div>
-        </div>
-        <div class="fake-chat">
-          <div class="fake-chat-q">Q. 우리가 올해 특히 주의해야 할 항목은?</div>
-          <div class="fake-chat-a">최근 3년 기준 증가 추세인 지적 유형은 ① 개인정보 처리방침 미갱신 ② 연구비 종료 후 집행 ③ 근로장학금 실근무 기록 미비입니다. 이 세 항목을 우선 자체점검하시길 권장합니다.</div>
-        </div>
-      </div>
+    <div class="card-title">챗봇 구조 — 어떻게 동작하나요?</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:14px">이 챗봇은 <strong>외부 AI API 없이</strong> 내장된 994건 감사 데이터를 키워드 점수 방식으로 즉시 검색합니다. 입력한 단어와 관련도가 높은 지적 사례를 최대 10건 순위별로 보여줍니다.</p>
+    <div class="cols2">
+      <div class="tip green"><div class="tip-icon">✅</div><div><b>장점</b><br>인터넷 연결 없이도 즉시 응답. API 비용 없음. 실제 감사 데이터만 표시.</div></div>
+      <div class="tip blue"><div class="tip-icon">ℹ️</div><div><b>검색 방식</b><br>기관명·지적내용·조치사항에서 키워드 매칭. 관련도 점수 순 정렬.</div></div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">효과적인 질문 예시</div>
-    <table class="tbl">
-      <tr><th>상황</th><th>추천 질문</th></tr>
-      <tr><td>감사 전 준비</td><td>"우리 학교 학사팀이 감사 전 가장 먼저 확인해야 할 사항은?"</td></tr>
-      <tr><td>유사 사례 검색</td><td>"장학금 지급 관련 지적 사례를 모두 보여줘"</td></tr>
-      <tr><td>트렌드 파악</td><td>"최근 3년간 새로 증가하는 지적 유형은 무엇이야?"</td></tr>
-      <tr><td>조치 방법</td><td>"법인카드 심야 사용이 지적됐을 때 어떻게 해명했어?"</td></tr>
-      <tr><td>위험도 확인</td><td>"시설팀 기준 고위험 항목만 요약해줘"</td></tr>
+    <div class="card-title">화면 구성</div>
+    <div class="screen">
+      <div class="screen-bar"><div class="screen-dot" style="background:#ff5f57"></div><div class="screen-dot" style="background:#febc2e"></div><div class="screen-dot" style="background:#28c840"></div><div class="screen-url">student378.github.io/2025audit/ — 💬 검색챗봇</div></div>
+      <div class="screen-body" style="display:flex;gap:10px">
+        <div style="width:140px;flex-shrink:0;background:rgba(255,255,255,.04);border-radius:8px;padding:10px">
+          <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:8px">💬 빠른 질문</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:5px">📊 현황 통계</div>
+          <div style="background:rgba(255,255,255,.06);border-radius:4px;padding:5px 7px;font-size:9px;color:rgba(255,255,255,.5);margin-bottom:3px">📈 전체 지적사례 현황 요약</div>
+          <div style="background:rgba(255,255,255,.06);border-radius:4px;padding:5px 7px;font-size:9px;color:rgba(255,255,255,.5);margin-bottom:3px">💰 재정조치 금액이 가장 큰 사례</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.3);margin:8px 0 5px">🔍 분야별 사례</div>
+          <div style="background:rgba(255,255,255,.06);border-radius:4px;padding:5px 7px;font-size:9px;color:rgba(255,255,255,.5);margin-bottom:3px">🏗️ 시설·공사 지적사례</div>
+          <div style="background:rgba(255,255,255,.06);border-radius:4px;padding:5px 7px;font-size:9px;color:rgba(255,255,255,.5)">👥 채용·인사 위반 사례</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div style="background:rgba(255,255,255,.05);border-radius:8px;padding:10px">
+            <div style="font-size:9px;color:#93c5fd;margin-bottom:5px">🔵 사용자: 시설 공사 수의계약</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.6);line-height:1.6">🔍 <b style="color:#fff">"시설 공사 수의계약"</b> 검색 결과 (7건)<br>
+              <span style="color:#fca5a5">① A대학 — 수의계약 근거 미비 (2022)</span><br>
+              <span style="color:#fca5a5">② B대학 — 2천만원↑ 수의계약 분할발주 (2021)</span><br>
+              <span style="color:#fdba74">③ C대학 — 설계감리 동일업체 (2023)</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.08);border-radius:6px;padding:8px 10px;font-size:10px;color:rgba(255,255,255,.4)">🔍 기관명, 지적 분야, 키워드로 검색하세요...</div>
+        </div>
+      </div>
+    </div>
+    <table class="tbl" style="margin-top:14px">
+      <tr><th>구성 요소</th><th>설명</th></tr>
+      <tr><td>왼쪽 — 빠른 질문 패널</td><td>자주 쓰는 검색어를 버튼으로 제공. 클릭하면 즉시 검색됩니다</td></tr>
+      <tr><td>오른쪽 위 — 검색 결과</td><td>관련도 순으로 최대 10건 표시. 기관명·지적내용·조치·금액 포함</td></tr>
+      <tr><td>오른쪽 아래 — 입력창</td><td>직접 키워드 입력 후 Enter 또는 ▶ 클릭</td></tr>
     </table>
-    <div class="tip orange"><div class="tip-icon">⚠️</div><div>AI 챗봇은 데이터 기반 참고 자료입니다. 최종 감사 대응은 반드시 관련 법령과 담당자 판단을 병행하세요.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">잘 작동하는 검색어 유형</div>
+    <table class="tbl">
+      <tr><th>검색 목적</th><th>효과적인 검색어</th><th>결과 특징</th></tr>
+      <tr><td>기관명으로 찾기</td><td>서울대학교 / 경희대 / 유한대</td><td>해당 기관의 전체 지적 이력</td></tr>
+      <tr><td>지적 유형으로 찾기</td><td>법인카드 / 수의계약 / 보강</td><td>해당 키워드 포함 사례 전체</td></tr>
+      <tr><td>분야 전체 보기</td><td>시설공사 / 채용인사 / 연구비</td><td>해당 카테고리 주요 사례</td></tr>
+      <tr><td>빠른 질문 버튼 활용</td><td>왼쪽 패널 버튼 클릭</td><td>미리 설정된 주요 검색 즉시 실행</td></tr>
+    </table>
+    <div class="tip orange"><div class="tip-icon">💡</div><div><b>검색 팁</b> — 긴 문장보다 <b>핵심 키워드 2~3개</b>를 입력하면 더 정확한 결과가 나옵니다.<br>예: "시설 공사 관련해서 어떤 지적이 있었나요?" → <b>"시설 수의계약"</b></div></div>
+    <div class="tip red"><div class="tip-icon">⚠️</div><div><b>주의</b> — 이 챗봇은 질문에 대한 <b>AI 해석·요약 기능은 없습니다.</b> 입력한 키워드와 일치하는 실제 지적 사례 데이터를 검색해서 보여주는 방식입니다.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">빠른 질문 버튼 목록</div>
+    <div class="cols2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px">📊 현황 통계</div>
+        <ul class="checklist" style="gap:5px">
+          <li style="padding:7px 12px;font-size:12px">전체 지적사례 현황 요약</li>
+          <li style="padding:7px 12px;font-size:12px">재정조치 금액이 가장 큰 사례</li>
+          <li style="padding:7px 12px;font-size:12px">지적건수 상위 기관</li>
+          <li style="padding:7px 12px;font-size:12px">가장 많은 처분 유형</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px">🔍 분야별 사례</div>
+        <ul class="checklist" style="gap:5px">
+          <li style="padding:7px 12px;font-size:12px">예산·회계 주요 지적사례</li>
+          <li style="padding:7px 12px;font-size:12px">채용·인사 위반 사례</li>
+          <li style="padding:7px 12px;font-size:12px">연구비 부당 집행 사례</li>
+          <li style="padding:7px 12px;font-size:12px">시설·공사 지적사례</li>
+        </ul>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px">🏫 기관 검색</div>
+        <ul class="checklist" style="gap:5px">
+          <li style="padding:7px 12px;font-size:12px">서울대학교 / 경희대학교 / 고려대학교</li>
+        </ul>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px">📋 수감자료 준비</div>
+        <ul class="checklist" style="gap:5px">
+          <li style="padding:7px 12px;font-size:12px">법인카드 관련 준비서류</li>
+          <li style="padding:7px 12px;font-size:12px">채용 관련 필수 서류 목록</li>
+          <li style="padding:7px 12px;font-size:12px">고위험 자가점검 항목</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -445,8 +509,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt)
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <div class="step-title">이상있음 항목 → AI 챗봇으로 유사 사례 확인</div>
-          <div class="step-desc">이상있음으로 표시된 항목이 있다면, AI 챗봇에 "우리 학교에서 [해당 항목] 관련 지적 사례와 조치 방법을 알려줘"라고 질문하여 사전 대응 방안을 준비합니다.</div>
+          <div class="step-title">이상있음 항목 → 검색챗봇으로 유사 사례 확인</div>
+          <div class="step-desc">이상있음으로 표시된 항목이 있다면, 검색챗봇 탭에서 해당 키워드를 입력하거나 빠른 질문 버튼을 클릭하여 관련 지적 사례와 조치 내용을 확인하고 사전 대응 방안을 준비합니다.</div>
         </div>
       </div>
       <div class="step">
@@ -506,54 +570,71 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt)
 <div class="section" id="s7">
   <div class="sec-hdr">
     <div class="sec-num">⑦</div>
-    <div><div class="sec-title">실전 활용 시나리오</div><div class="sec-sub">상황별 사용 방법을 단계별로 안내합니다</div></div>
+    <div><div class="sec-title">실전 활용 시나리오</div><div class="sec-sub">상황별 구체적 사용 방법을 단계별로 안내합니다</div></div>
   </div>
 
   <div class="card">
-    <div class="card-title">📅 시나리오 1 — 연간 감사 준비 (감사 3개월 전)</div>
+    <div class="card-title">📅 시나리오 1 — 감사 전 우리 부서 위험 항목 파악</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">감사 일정이 잡혔을 때, 우리 부서에서 지적될 가능성이 높은 항목을 미리 확인합니다.</p>
     <ul class="checklist">
-      <li>감사대시보드 "종합 대시보드" 탭에서 최근 3년 트렌드 파악</li>
-      <li>AI 챗봇에 "올해 중점 감사 예상 항목을 알려줘" 질문</li>
-      <li>"담당업무별 가이드" 탭에서 우리 부서 고위험 항목 목록 출력</li>
-      <li>자체점검 시스템으로 전 부서 사전 점검 실시</li>
-      <li class="done">감사실에서 전 부서 제출 현황 실시간 확인</li>
+      <li>감사대시보드 접속 → <b>🏢 담당업무별 가이드</b> 탭 클릭</li>
+      <li>우리 부서(예: 기획·예산팀, 시설·안전팀 등)를 선택하여 <b>🔴 고위험 체크포인트</b> 목록 확인</li>
+      <li>각 항목 옆 <span class="badge badge-green">✅ 자체점검 §X-X</span> 배지를 클릭 → 자체점검 입력화면 이동</li>
+      <li>해당 항목에 대한 실제 현황을 자체점검 시스템에서 이상유무 체크</li>
+      <li>이상있음 항목이 있으면 <b>📋 지적사례 목록</b> 탭에서 키워드 검색으로 유사 사례 조치 내용 확인</li>
+    </ul>
+    <div class="tip blue"><div class="tip-icon">💡</div><div>담당업무별 가이드 탭에는 실제 교육부 감사 데이터 기반으로 설계된 핵심 체크포인트가 위험도별로 정리되어 있습니다.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔍 시나리오 2 — 특정 사안 발생 시 유사 사례 즉시 검색</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">예: 2,500만원 수의계약을 체결해야 하는 상황에서 유사 지적 사례를 확인하고 싶을 때</p>
+    <ul class="checklist">
+      <li><b>📋 지적사례 목록</b> 탭 클릭</li>
+      <li>검색창에 <b>"수의계약"</b> 입력 → 관련 지적 사례 목록 확인</li>
+      <li>또는 빠른 질문 패널에서 <b>"계약·입찰 위반 사례"</b> 클릭</li>
+      <li>유사 사례의 지적 내용과 조치 결과를 확인하여 사전 서류 준비</li>
+      <li>자체점검 §4-1(계약관리) 항목도 함께 점검 후 이상유무 기록</li>
     </ul>
   </div>
 
   <div class="card">
-    <div class="card-title">🔍 시나리오 2 — 특정 사안 발생 시 즉시 검색</div>
-    <div class="step-desc" style="margin-bottom:12px">예: 시설팀에서 2,500만원 수의계약을 체결해야 할 상황</div>
+    <div class="card-title">🏫 시나리오 3 — 신임 담당자 온보딩</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">새로 부임한 담당자가 우리 부서 감사 위험 요소를 빠르게 파악해야 할 때</p>
     <ul class="checklist">
-      <li>AI 챗봇에 "2천만원 이상 수의계약 관련 지적 사례와 요구 서류 알려줘" 질문</li>
-      <li>"지적사례 목록" 탭에서 "수의계약" 키워드로 유사 사례 전체 검색</li>
-      <li>지적 사례의 조치 내용을 참고하여 서류 사전 준비</li>
-      <li>자체점검 §4-1(계약관리) 항목 점검 후 이상유무 기록</li>
+      <li><b>🏢 담당업무별 가이드</b> 탭 → 담당 부서 선택</li>
+      <li>고위험(🔴)→중위험(🟠)→주의(🟡) 순으로 핵심 체크포인트 숙지</li>
+      <li><b>📋 수감자료 준비가이드</b> 탭 → 평소 비치해야 할 서류 목록 파악</li>
+      <li>빠른 질문 패널 → <b>"고위험 자가점검 항목"</b> 클릭 → 우선 점검 항목 확인</li>
+      <li><b>📊 종합 대시보드</b> 탭 → 연도별 지적 트렌드 파악</li>
+    </ul>
+    <div class="tip green"><div class="tip-icon">✅</div><div>이 순서대로 진행하면 신임 담당자가 <b>반나절 안에</b> 우리 부서 감사 대응 체계를 파악할 수 있습니다.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 시나리오 4 — 전 부서 자체점검 관리 (감사실)</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">감사실 담당자가 전 부서의 자체점검 제출 현황을 모니터링할 때</p>
+    <ul class="checklist">
+      <li><code style="background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:4px;font-size:11px">student378.github.io/check/admin.html</code> 접속</li>
+      <li>전 부서 제출 현황 카드에서 완료(✅) / 미제출(⏳) / 임시저장(💾) 상태 확인</li>
+      <li>미제출 부서에 개별 독촉 → 제출 완료 재확인</li>
+      <li>제출 완료된 부서 중 <b>이상있음</b> 항목이 있는 부서 상세 내역 열람</li>
+      <li>감사대시보드 담당업무별 가이드와 대조하여 위험도 재확인</li>
     </ul>
   </div>
 
   <div class="card">
-    <div class="card-title">📊 시나리오 3 — 신임 담당자 온보딩</div>
-    <div class="step-desc" style="margin-bottom:12px">새로 부임한 담당자가 우리 부서 감사 위험 요소를 빠르게 파악해야 할 때</div>
-    <ul class="checklist">
-      <li>"담당업무별 가이드" 탭에서 담당 부서 선택</li>
-      <li>고위험 항목부터 순서대로 실제 현황과 대조</li>
-      <li>AI 챗봇에 "학생지원팀 신임 담당자가 가장 먼저 확인해야 할 것은?" 질문</li>
-      <li>"수감자료 준비가이드" 탭에서 평소 비치해야 할 서류 목록 파악</li>
-    </ul>
-    <div class="tip green"><div class="tip-icon">✅</div><div>이 시나리오대로 진행하면 신임 담당자가 <b>하루 안에</b> 감사 대응 체계를 파악할 수 있습니다.</div></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">⚡ 빠른 참고 — 탭별 주요 용도 요약</div>
+    <div class="card-title">⚡ 탭별 주요 용도 요약</div>
     <table class="tbl">
-      <tr><th>탭</th><th>언제 사용?</th><th>소요 시간</th></tr>
-      <tr><td>📊 종합 대시보드</td><td>감사 준비 시작, 전체 현황 파악</td><td>5분</td></tr>
-      <tr><td>📋 지적사례 목록</td><td>특정 사안 유사 사례 검색</td><td>2~5분</td></tr>
-      <tr><td>🏫 대학별 현황</td><td>타 대학 벤치마킹</td><td>3분</td></tr>
-      <tr><td>📋 수감자료 가이드</td><td>감사장 비치 서류 준비</td><td>10분</td></tr>
-      <tr><td>🏢 담당업무별 가이드</td><td>부서별 점검 항목 확인 (★ 핵심)</td><td>10~15분</td></tr>
-      <tr><td>💬 AI 챗봇</td><td>복합적 질문, 의사결정 참고</td><td>즉시</td></tr>
+      <tr><th>탭</th><th>언제 사용?</th><th>검색 방식</th></tr>
+      <tr><td>📊 종합 대시보드</td><td>전체 현황·연도별 트렌드 파악</td><td>자동 표시</td></tr>
+      <tr><td>📋 지적사례 목록</td><td>키워드로 유사 사례 검색</td><td>직접 키워드 입력</td></tr>
+      <tr><td>🏫 대학별 현황</td><td>타 기관 지적 패턴 비교</td><td>기관명 선택</td></tr>
+      <tr><td>📋 수감자료 가이드</td><td>감사장 비치 서류 목록 확인</td><td>분야별 클릭</td></tr>
+      <tr><td>🏢 담당업무별 가이드</td><td>부서별 고위험 항목 확인 (★ 핵심)</td><td>부서 선택</td></tr>
+      <tr><td>💬 검색챗봇</td><td>빠른 질문 버튼 또는 키워드 입력</td><td>키워드 검색</td></tr>
     </table>
+    <div class="tip orange"><div class="tip-icon">⚠️</div><div>검색챗봇은 키워드 기반 데이터 검색 도구입니다. 입력한 단어와 일치하는 실제 지적 사례를 보여주는 방식이며, 질문을 해석하거나 요약 답변을 생성하지 않습니다.</div></div>
   </div>
 </div>
 
