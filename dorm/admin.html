@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>생활관 관리자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+
+<!-- 로그인(연결) 화면 -->
+<section id="login" class="login" hidden>
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <h1><span class="lg-mark">관리</span>생활관 홈페이지 관리자</h1>
+    <p class="desc">홈페이지 내용은 GitHub 저장소의 데이터 파일에 저장됩니다.<br>저장소에 쓰기 권한이 있는 <b>GitHub 토큰</b>으로 연결하세요.</p>
+    <div class="grid2">
+      <label>GitHub 소유자(계정)<input name="owner" required></label>
+      <label>저장소 이름<input name="repo" required></label>
+      <label>브랜치<input name="branch" required></label>
+      <label>사이트 폴더 경로<input name="base" placeholder="예: dorm"></label>
+    </div>
+    <label>Personal Access Token<input name="token" type="password" placeholder="github_pat_..." required></label>
+    <label class="chk"><input type="checkbox" name="remember"> 이 브라우저에 토큰 기억하기 (개인 PC에서만 사용)</label>
+    <p class="err" id="loginErr" role="alert"></p>
+    <button type="submit" class="btn primary block" id="loginBtn">연결하기</button>
+    <button type="button" class="btn block" id="localBtn">로컬 모드로 둘러보기 (저장 시 파일 다운로드)</button>
+    <details class="help">
+      <summary>토큰 발급 방법</summary>
+      <ol>
+        <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Settings → Developer settings → Fine-grained tokens</a>에서 <b>Generate new token</b></li>
+        <li>Repository access: <b>Only select repositories</b> → 이 저장소만 선택</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+        <li>만료 기간을 정하고 생성한 토큰(github_pat_…)을 위에 붙여넣기</li>
+      </ol>
+      <p>토큰은 GitHub 외 어디에도 전송되지 않으며, 이 브라우저에만 보관됩니다.</p>
+    </details>
+  </form>
+</section>
+
+<!-- 관리자 화면 -->
+<div id="app" class="app" hidden>
+  <aside class="side">
+    <div class="side-hd"><strong id="sideTitle">생활관</strong><span>관리자</span></div>
+    <nav id="sideNav"></nav>
+    <div class="side-ft">
+      <a href="index.html" target="_blank" rel="noopener">홈페이지 보기 ↗</a>
+      <button type="button" id="logoutBtn">연결 해제</button>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="메뉴">☰</button>
+      <h2 id="viewTitle"></h2>
+      <span class="mode" id="modeChip"></span>
+      <div class="top-actions">
+        <button type="button" class="btn" id="previewBtn">미리보기</button>
+        <button type="button" class="btn primary" id="saveBtn" disabled>저장 · 배포</button>
+      </div>
+    </header>
+    <div class="view" id="view"></div>
+  </div>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-hd"><h3 id="modalTitle"></h3><button type="button" class="x" id="modalClose" aria-label="닫기">&times;</button></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+<div id="toast" class="toast" role="status"></div>
+<datalist id="linkOptions"></datalist>
+
+<script src="assets/icons.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>

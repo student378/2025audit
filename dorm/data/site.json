@@ -1,0 +1,215 @@
+{
+  "settings": {
+    "univName": "OO대학교",
+    "siteName": "생활관",
+    "siteNameEn": "DORMITORY",
+    "logoImage": "",
+    "primaryColor": "#0b4ea2",
+    "accentColor": "#00a0e9",
+    "univUrl": "https://www.example.ac.kr",
+    "address": "(00000) 경기도 OO시 OO구 OO로 00 OO대학교 생활관",
+    "tel": "032-000-0000",
+    "fax": "032-000-0001",
+    "email": "dorm@example.ac.kr",
+    "officeHours": "평일 09:00 ~ 18:00 (점심 12:00 ~ 13:00)",
+    "copyright": "COPYRIGHT © OO UNIVERSITY DORMITORY. ALL RIGHTS RESERVED.",
+    "homeBoards": ["notice", "admission", "news"],
+    "footerLinks": [
+      { "label": "개인정보처리방침", "url": "#/m/privacy", "strong": true },
+      { "label": "이메일무단수집거부", "url": "#/m/noemail" },
+      { "label": "사이트맵", "url": "#/sitemap" }
+    ],
+    "familySites": [
+      { "label": "OO대학교 홈페이지", "url": "https://www.example.ac.kr" },
+      { "label": "종합정보시스템", "url": "https://portal.example.ac.kr" },
+      { "label": "도서관", "url": "https://lib.example.ac.kr" }
+    ],
+    "topLinks": [
+      { "label": "대학 홈페이지", "url": "https://www.example.ac.kr" },
+      { "label": "사이트맵", "url": "#/sitemap" }
+    ],
+    "contacts": [
+      { "label": "생활관 행정실", "tel": "032-000-0000" },
+      { "label": "사감실 (야간)", "tel": "032-000-0002" },
+      { "label": "시설 관리", "tel": "032-000-0003" }
+    ]
+  },
+  "menu": [
+    {
+      "id": "about",
+      "title": "생활관소개",
+      "children": [
+        { "id": "greeting", "title": "인사말", "type": "page" },
+        { "id": "status", "title": "생활관 현황", "type": "page" },
+        { "id": "organization", "title": "운영조직", "type": "page" },
+        { "id": "location", "title": "오시는 길", "type": "page" }
+      ]
+    },
+    {
+      "id": "admission-guide",
+      "title": "입·퇴사안내",
+      "children": [
+        { "id": "admission-info", "title": "입사안내", "type": "page" },
+        { "id": "leave-info", "title": "퇴사안내", "type": "page" },
+        { "id": "fee", "title": "생활관비 안내", "type": "page" },
+        { "id": "admission", "title": "입·퇴사 공지", "type": "board", "boardId": "admission" }
+      ]
+    },
+    {
+      "id": "life",
+      "title": "생활안내",
+      "children": [
+        { "id": "rules", "title": "생활수칙", "type": "page" },
+        { "id": "points", "title": "상·벌점 제도", "type": "page" },
+        { "id": "overnight", "title": "외박 안내", "type": "page" },
+        { "id": "meal", "title": "주간식단표", "type": "meal" },
+        { "id": "schedule", "title": "생활관 일정", "type": "schedule" }
+      ]
+    },
+    {
+      "id": "facility",
+      "title": "시설안내",
+      "children": [
+        { "id": "rooms", "title": "호실 안내", "type": "page" },
+        { "id": "amenities", "title": "편의시설", "type": "page" },
+        { "id": "safety", "title": "안전·방재", "type": "page" }
+      ]
+    },
+    {
+      "id": "community",
+      "title": "커뮤니티",
+      "children": [
+        { "id": "notice", "title": "공지사항", "type": "board", "boardId": "notice" },
+        { "id": "news", "title": "생활관 소식", "type": "board", "boardId": "news" },
+        { "id": "faq", "title": "자주 묻는 질문", "type": "board", "boardId": "faq" },
+        { "id": "data", "title": "자료실", "type": "board", "boardId": "data" }
+      ]
+    }
+  ],
+  "hiddenPages": [
+    { "id": "privacy", "title": "개인정보처리방침", "type": "page" },
+    { "id": "noemail", "title": "이메일무단수집거부", "type": "page" }
+  ],
+  "pages": {
+    "greeting": {
+      "html": "<div class=\"greeting\"><p class=\"lead\">학생 여러분의 <strong>두 번째 집</strong>, 생활관에 오신 것을 환영합니다.</p><p>생활관은 학생들이 안전하고 쾌적한 환경에서 학업에 전념하며, 공동체 생활을 통해 배려와 협력의 가치를 배울 수 있도록 운영되고 있습니다.</p><p>우리 생활관은 최신 시설과 체계적인 운영 시스템을 갖추고, 학생 한 사람 한 사람이 편안하게 생활할 수 있도록 세심하게 지원하고 있습니다. 또한 다양한 생활 프로그램을 통해 사생 간 교류와 성장을 돕고 있습니다.</p><p>앞으로도 사생 여러분의 목소리에 귀 기울이며, 더 나은 생활관을 만들기 위해 최선을 다하겠습니다. 감사합니다.</p><p class=\"sign\">OO대학교 생활관장 <strong>홍 길 동</strong></p></div>"
+    },
+    "status": {
+      "html": "<h3>생활관 개요</h3><table class=\"tbl\"><tbody><tr><th>위치</th><td>OO대학교 캠퍼스 내</td></tr><tr><th>규모</th><td>지하 1층 ~ 지상 10층</td></tr><tr><th>수용 인원</th><td>총 500명 (남 250명 / 여 250명)</td></tr><tr><th>호실 구성</th><td>2인실 230실, 4인실 10실</td></tr><tr><th>부대 시설</th><td>식당, 편의점, 체력단련실, 세탁실, 스터디룸, 휴게실</td></tr></tbody></table><h3>층별 안내</h3><table class=\"tbl center\"><thead><tr><th>층</th><th>용도</th></tr></thead><tbody><tr><td>B1</td><td>체력단련실, 기계실</td></tr><tr><td>1F</td><td>행정실, 사감실, 식당, 편의점</td></tr><tr><td>2F ~ 5F</td><td>남학생 호실</td></tr><tr><td>6F ~ 9F</td><td>여학생 호실</td></tr><tr><td>10F</td><td>스터디룸, 휴게실</td></tr></tbody></table>"
+    },
+    "organization": {
+      "html": "<div class=\"org\"><div class=\"org-box top\">생활관장</div><div class=\"org-line\"></div><div class=\"org-box\">행정실</div><div class=\"org-line\"></div><div class=\"org-row\"><div class=\"org-box sm\">사감</div><div class=\"org-box sm\">행정 담당</div><div class=\"org-box sm\">시설 담당</div><div class=\"org-box sm\">자치회</div></div></div><h3>업무 담당자</h3><table class=\"tbl center\"><thead><tr><th>구분</th><th>담당 업무</th><th>연락처</th></tr></thead><tbody><tr><td>행정 담당</td><td>입·퇴사, 생활관비, 증명서 발급</td><td>032-000-0000</td></tr><tr><td>사감</td><td>생활지도, 외박, 상·벌점</td><td>032-000-0002</td></tr><tr><td>시설 담당</td><td>시설 고장 접수 및 보수</td><td>032-000-0003</td></tr></tbody></table>"
+    },
+    "location": {
+      "html": "<div class=\"map-box\"><p>지도는 관리자 페이지 &gt; 메뉴·페이지 &gt; 오시는 길에서 네이버·카카오 지도 공유 링크(iframe)로 교체할 수 있습니다.</p></div><h3>주소</h3><p>(00000) 경기도 OO시 OO구 OO로 00 OO대학교 생활관</p><h3>대중교통</h3><ul class=\"dot\"><li><strong>지하철</strong> : 0호선 OO역 0번 출구 도보 10분</li><li><strong>버스</strong> : 00, 00-1번 OO대학교 정류장 하차</li></ul><h3>자가용</h3><ul class=\"dot\"><li>교내 주차장 이용 (입·퇴사 기간 임시 개방)</li></ul>"
+    },
+    "admission-info": {
+      "html": "<h3>입사 자격</h3><ul class=\"dot\"><li>본교 재학생 및 신입생</li><li>원거리 거주자 우선 선발 (거리 기준은 모집 공고 참조)</li><li>전염성 질환이 없고 공동생활에 지장이 없는 자</li></ul><h3>입사 절차</h3><ol class=\"step\"><li><strong>STEP 01</strong>모집 공고 확인</li><li><strong>STEP 02</strong>온라인 입사 신청</li><li><strong>STEP 03</strong>합격자 발표</li><li><strong>STEP 04</strong>생활관비 납부</li><li><strong>STEP 05</strong>서류 제출 및 입사</li></ol><h3>제출 서류</h3><ul class=\"dot\"><li>결핵 검사 결과서 (입사일 기준 3개월 이내 발급)</li><li>입사 서약서 (자료실 양식 다운로드)</li></ul><p class=\"note\">※ 세부 일정은 <a href=\"#/m/admission\">입·퇴사 공지</a>를 확인하시기 바랍니다.</p>"
+    },
+    "leave-info": {
+      "html": "<h3>정기 퇴사</h3><ul class=\"dot\"><li>학기 종료 후 지정된 퇴사 기간 내 퇴사</li><li>호실 청소 및 사감 점검 후 카드키 반납</li></ul><h3>중도 퇴사</h3><ul class=\"dot\"><li>퇴사 7일 전까지 행정실에 퇴사 신청서 제출</li><li>환불 기준에 따라 잔여 생활관비 환불</li></ul><h3>환불 기준</h3><table class=\"tbl center\"><thead><tr><th>퇴사 시점</th><th>환불 금액</th></tr></thead><tbody><tr><td>입사 전</td><td>전액</td></tr><tr><td>입사 후 30일 이내</td><td>잔여 일수 일할 계산 (관리비 제외)</td></tr><tr><td>입사 후 30일 초과</td><td>잔여 일수 일할 계산 후 위약금 공제</td></tr></tbody></table>"
+    },
+    "fee": {
+      "html": "<h3>학기별 생활관비</h3><table class=\"tbl center\"><thead><tr><th>구분</th><th>관리비</th><th>식비</th><th>합계</th></tr></thead><tbody><tr><td>2인실</td><td>000,000원</td><td>000,000원</td><td>000,000원</td></tr><tr><td>4인실</td><td>000,000원</td><td>000,000원</td><td>000,000원</td></tr></tbody></table><p class=\"note\">※ 금액은 학기별로 변동될 수 있으며, 모집 공고의 금액이 우선합니다.</p><h3>납부 방법</h3><ul class=\"dot\"><li>합격자 발표 후 개별 가상계좌로 납부</li><li>납부 기한 내 미납 시 합격 취소</li></ul>"
+    },
+    "rules": {
+      "html": "<h3>기본 수칙</h3><ul class=\"dot\"><li>출입은 본인 카드키로만 가능하며, 타인에게 대여할 수 없습니다.</li><li>호실 내 취사, 흡연, 음주를 금지합니다.</li><li>이성 층 및 이성 호실 출입을 금지합니다.</li><li>22:00 이후에는 정숙을 유지합니다.</li><li>공용 시설은 사용 후 정리정돈합니다.</li></ul><h3>출입 시간</h3><table class=\"tbl center\"><thead><tr><th>구분</th><th>시간</th></tr></thead><tbody><tr><td>출입 통제</td><td>01:00 ~ 05:00</td></tr><tr><td>점호</td><td>매일 23:30</td></tr></tbody></table>"
+    },
+    "points": {
+      "html": "<h3>상점 기준</h3><table class=\"tbl\"><thead><tr><th>항목</th><th class=\"c\">점수</th></tr></thead><tbody><tr><td>생활관 행사·봉사 참여</td><td class=\"c\">+1 ~ +3</td></tr><tr><td>모범 사생 선정</td><td class=\"c\">+5</td></tr></tbody></table><h3>벌점 기준</h3><table class=\"tbl\"><thead><tr><th>항목</th><th class=\"c\">점수</th></tr></thead><tbody><tr><td>무단 외박</td><td class=\"c\">-3</td></tr><tr><td>호실 내 취사</td><td class=\"c\">-5</td></tr><tr><td>흡연·음주</td><td class=\"c\">-10</td></tr><tr><td>이성 층 출입</td><td class=\"c\">-15</td></tr></tbody></table><p class=\"note\">※ 누적 벌점 15점 이상 시 퇴사 조치되며, 다음 학기 입사가 제한됩니다.</p>"
+    },
+    "overnight": {
+      "html": "<h3>외박 신청</h3><ul class=\"dot\"><li>외박 당일 22:00까지 신청</li><li>신청 방법 : 생활관 앱 또는 사감실 방문</li><li>무단 외박 시 벌점이 부과됩니다.</li></ul><h3>장기 외박</h3><ul class=\"dot\"><li>3일 이상 외박 시 사유서 제출</li></ul>"
+    },
+    "rooms": {
+      "html": "<div class=\"cards\"><div class=\"card\"><div class=\"card-img ph\">2인실</div><div class=\"card-body\"><h4>2인실</h4><p>침대, 책상, 의자, 옷장, 신발장, 개별 냉난방, 개별 욕실</p></div></div><div class=\"card\"><div class=\"card-img ph\">4인실</div><div class=\"card-body\"><h4>4인실</h4><p>2층 침대, 책상, 의자, 옷장, 냉난방, 공용 욕실</p></div></div></div><p class=\"note\">※ 사진은 관리자 페이지에서 이미지 업로드로 교체할 수 있습니다.</p>"
+    },
+    "amenities": {
+      "html": "<table class=\"tbl\"><thead><tr><th>시설</th><th>위치</th><th>운영 시간</th></tr></thead><tbody><tr><td>식당</td><td>1F</td><td>조식 07:30~09:00 / 중식 11:30~13:30 / 석식 17:30~19:00</td></tr><tr><td>편의점</td><td>1F</td><td>07:00 ~ 24:00</td></tr><tr><td>체력단련실</td><td>B1</td><td>06:00 ~ 23:00</td></tr><tr><td>세탁실</td><td>각 층</td><td>24시간</td></tr><tr><td>스터디룸</td><td>10F</td><td>24시간</td></tr></tbody></table>"
+    },
+    "safety": {
+      "html": "<h3>화재 발생 시 행동 요령</h3><ol class=\"num\"><li>“불이야!” 크게 외치고 화재경보기를 누릅니다.</li><li>젖은 수건으로 코와 입을 막고 낮은 자세로 비상계단을 이용해 대피합니다.</li><li>엘리베이터는 절대 이용하지 않습니다.</li><li>119에 신고하고 사감실에 알립니다.</li></ol><h3>정기 소방 훈련</h3><p>매 학기 1회 실시하며, 모든 사생은 의무적으로 참여해야 합니다.</p>"
+    },
+    "privacy": {
+      "html": "<p>OO대학교 생활관은 「개인정보 보호법」에 따라 이용자의 개인정보를 보호하고 이와 관련한 고충을 원활하게 처리할 수 있도록 다음과 같이 개인정보처리방침을 수립·공개합니다.</p><h3>제1조 (개인정보의 처리 목적)</h3><p>생활관 입사 신청 및 선발, 생활관 운영 관리 목적으로 개인정보를 처리합니다.</p><p class=\"note\">※ 학교 공식 개인정보처리방침으로 교체하여 사용하세요.</p>"
+    },
+    "noemail": {
+      "html": "<p>본 웹사이트에 게시된 이메일 주소가 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용하여 무단으로 수집되는 것을 거부하며, 이를 위반 시 정보통신망법에 의해 형사처벌됨을 유념하시기 바랍니다.</p>"
+    }
+  },
+  "slides": [
+    {
+      "image": "",
+      "bg": "linear-gradient(120deg,#0b3d91 0%,#1666c5 55%,#2aa3e6 100%)",
+      "eyebrow": "WELCOME TO DORMITORY",
+      "title": "함께 생활하고\n함께 성장하는 생활관",
+      "subtitle": "안전하고 쾌적한 환경에서 학업과 생활의 균형을 지원합니다.",
+      "link": "#/m/greeting",
+      "button": "생활관 소개"
+    },
+    {
+      "image": "",
+      "bg": "linear-gradient(120deg,#123063 0%,#2b4fa0 60%,#5a7fd6 100%)",
+      "eyebrow": "ADMISSION",
+      "title": "2027학년도 1학기\n입사 신청 안내",
+      "subtitle": "모집 일정과 제출 서류를 미리 확인하세요.",
+      "link": "#/m/admission-info",
+      "button": "입사안내 바로가기"
+    },
+    {
+      "image": "",
+      "bg": "linear-gradient(120deg,#08455e 0%,#0f7a8c 60%,#25b3b0 100%)",
+      "eyebrow": "DAILY LIFE",
+      "title": "오늘의 식단과\n생활관 일정을 한눈에",
+      "subtitle": "주간식단표와 생활관 일정을 확인할 수 있습니다.",
+      "link": "#/m/meal",
+      "button": "주간식단표"
+    }
+  ],
+  "quickLinks": [
+    { "label": "입사신청", "icon": "apply", "link": "#/m/admission-info" },
+    { "label": "입·퇴사 공지", "icon": "notice", "link": "#/m/admission" },
+    { "label": "주간식단표", "icon": "meal", "link": "#/m/meal" },
+    { "label": "외박안내", "icon": "moon", "link": "#/m/overnight" },
+    { "label": "생활관비", "icon": "card", "link": "#/m/fee" },
+    { "label": "자주 묻는 질문", "icon": "faq", "link": "#/m/faq" },
+    { "label": "자료실", "icon": "doc", "link": "#/m/data" },
+    { "label": "오시는 길", "icon": "map", "link": "#/m/location" }
+  ],
+  "popups": [
+    {
+      "active": true,
+      "title": "2027학년도 1학기 생활관 입사 신청 안내",
+      "image": "",
+      "html": "<p style=\"font-size:17px;font-weight:700;color:#0b4ea2;margin:0 0 10px\">2027학년도 1학기 입사 신청</p><p>신청 기간 : 2026. 12. 1.(화) ~ 12. 10.(목)</p><p>신청 방법 : 온라인 신청</p><p>자세한 내용은 입·퇴사 공지를 확인하세요.</p>",
+      "link": "#/m/admission",
+      "start": "2026-10-01",
+      "end": "2026-12-10",
+      "width": 380,
+      "top": 140,
+      "left": 80
+    }
+  ],
+  "banners": [
+    {
+      "image": "",
+      "bg": "linear-gradient(135deg,#0b4ea2,#00a0e9)",
+      "title": "생활관 안전 수칙\n꼭 지켜주세요",
+      "link": "#/m/safety"
+    },
+    {
+      "image": "",
+      "bg": "linear-gradient(135deg,#1d6b4f,#36b37e)",
+      "title": "식당 운영시간\n안내",
+      "link": "#/m/amenities"
+    }
+  ],
+  "schedule": [
+    { "start": "2026-09-01", "end": "2026-09-01", "title": "2학기 개강", "category": "학사" },
+    { "start": "2026-09-14", "end": "2026-09-14", "title": "생활관 소방훈련", "category": "안전" },
+    { "start": "2026-10-20", "end": "2026-10-24", "title": "중간고사 기간 스터디룸 24시간 개방", "category": "생활" },
+    { "start": "2026-11-11", "end": "2026-11-11", "title": "사생 간담회", "category": "행사" },
+    { "start": "2026-12-01", "end": "2026-12-10", "title": "2027-1학기 입사 신청", "category": "입사" },
+    { "start": "2026-12-19", "end": "2026-12-21", "title": "2학기 정기 퇴사", "category": "퇴사" }
+  ]
+}

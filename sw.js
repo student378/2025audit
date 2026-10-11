@@ -1,6 +1,6 @@
 // Service Worker — 감사 지적사항 현황판
 // ⚠️ 배포할 때마다 아래 버전 문자열을 반드시 올리세요 (v8, v9, ...)
-const CACHE_NAME = 'audit-v8';
+const CACHE_NAME = 'audit-v9';
 
 // 오프라인 폴백 및 아이콘 등 자주 안 바뀌는 자산만 캐시 우선으로 미리 저장
 const CORE = [
@@ -44,6 +44,8 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   if (!req.url.startsWith('http')) return;
+  // 생활관 홈페이지(dorm/)는 별도 사이트 — 캐시하지 않고 항상 네트워크로
+  if (new URL(req.url).pathname.includes('/dorm/')) return;
 
   // ── HTML 문서: 네트워크 우선 → 실패 시에만 캐시 (버전 번호를 잊어도 항상 최신 반영)
   if (isHtmlRequest(req)) {
